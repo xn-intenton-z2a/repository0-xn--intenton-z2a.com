@@ -10,10 +10,10 @@ services:
 
   replay:
     build: .
-    container_name: xn--intenton-z2a-com-web
+    container_name: intention-com-web
     entrypoint: ["npm", "run", "replay"]
     environment:
-      BUCKET_NAME: xn--intenton-z2a-com-web-bucket-local
+      BUCKET_NAME: intention-com-web-bucket-local
       OBJECT_PREFIX: events/
       REPLAY_QUEUE_URL: http://sqs.eu-west-2.localhost.localstack.cloud:4566/000000000000/xn--intenton-z2a-replay-queue-local
       AWS_REGION: eu-west-2
