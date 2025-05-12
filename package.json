@@ -5,7 +5,7 @@
   "type": "module",
   "main": "src/lib/main.js",
   "bin": {
-    "repository0-plot-code-lib": "src/lib/main.js"
+    "repository0-intention-com-web": "src/lib/main.js"
   },
   "scripts": {
     "build": "echo 'Nothing to build'",
@@ -28,10 +28,7 @@
     "ejs": "^3.1.10",
     "express": "^4.21.2",
     "js-yaml": "^4.1.0",
-    "mathjs": "^11.8.2",
-    "minimatch": "^10.0.1",
     "openai": "^4.95.1",
-    "sharp": "^0.32.6",
     "zod": "^3.24.4"
   },
   "devDependencies": {

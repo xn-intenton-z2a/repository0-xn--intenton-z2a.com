@@ -8,21 +8,6 @@
     "s3BucketName": "intention-com-web-bucket",
     "s3ObjectPrefix": "events/",
     "s3UseExistingBucket": "false",
-    "s3RetainBucket": "false",
-    "sqsSourceQueueName": "intention-com-web-source-queue",
-    "sqsReplayQueueName": "intention-com-web-replay-queue",
-    "sqsDigestQueueName": "intention-com-web-digest-queue",
-    "sqsDigestQueueArn": "arn:aws:sqs:eu-west-2:541134664601:intention-com-web-digest-queue",
-    "sqsUseExistingDigestQueue": "false",
-    "sqsRetainDigestQueue": "false",
-    "offsetsTableName": "intention-com-web-offsets-table",
-    "projectionsTableName": "intention-com-web-projections-table",
-    "lambdaEntry": "src/lib/main.",
-    "replayBatchLambdaFunctionName": "intention-com-web-replay-batch-function",
-    "sourceLambdaFunctionName": "intention-com-web-source-function",
-    "replayLambdaFunctionName": "intention-com-web-replay-function",
-    "replayBatchLambdaHandlerFunctionName": "replayBatchLambdaHandler",
-    "sourceLambdaHandlerFunctionName": "sourceLambdaHandler",
-    "replayLambdaHandlerFunctionName": "replayLambdaHandler"
+    "s3RetainBucket": "false"
   }
 }
