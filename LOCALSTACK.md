@@ -1,4 +1,4 @@
-# s3-sqs-bridge (Versioned Amazon S3 Object Put Event replay capable queuing to SQS)
+# intentïon.com
 
 An alternate version of the Deployment to AWS with localstack and direct execution of JavaScript.
 

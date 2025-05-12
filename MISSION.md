@@ -1,8 +1,12 @@
 ## Mission Statement
 
-S3 SQS Bridge is an open source bridge between a S3 Kafka‑compatible broker and AWS SQS. This lightweight solution includes:
+Be the consumer front end of intentïon.com featuring repository0 and the agentic-lib.
 
-- A Dockerized Node.js s3ConsumerToSqs that listens to S3 messages and forwards them to an SQS queue.
-- A Lambda function that processes S3 messages from SQS.
-- A new Lambda function that listens to GitHub event messages from a separate SQS queue and creates projections of GitHub resources, storing them in a PostgresDB table for use by other Lambdas.
-- All AWS infrastructure is provisioned using AWS CDK (Java, CDK 2.x).
+Build a library of content using a set of sources from the following URLS:
+https://github.com/xn-intenton-z2a/agentic-lib
+https://github.com/xn-intenton-z2a/repository0
+https://github.com/xn-intenton-z2a/repository0-crucible
+https://github.com/xn-intenton-z2a/repository0-plot-code-lib
+https://github.com/xn-intenton-z2a/repository0-xn--intenton-z2a.com/
+https://en.wikipedia.org/wiki/Artificial_general_intelligence
+https://en.wikipedia.org/wiki/Automated_planning_and_scheduling

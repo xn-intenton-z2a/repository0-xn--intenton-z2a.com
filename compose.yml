@@ -10,12 +10,12 @@ services:
 
   replay:
     build: .
-    container_name: s3-sqs-bridge
+    container_name: xn--intenton-z2a-com-web
     entrypoint: ["npm", "run", "replay"]
     environment:
-      BUCKET_NAME: s3-sqs-bridge-bucket-local
+      BUCKET_NAME: xn--intenton-z2a-com-web-bucket-local
       OBJECT_PREFIX: events/
-      REPLAY_QUEUE_URL: http://sqs.eu-west-2.localhost.localstack.cloud:4566/000000000000/s3-sqs-bridge-replay-queue-local
+      REPLAY_QUEUE_URL: http://sqs.eu-west-2.localhost.localstack.cloud:4566/000000000000/xn--intenton-z2a-replay-queue-local
       AWS_REGION: eu-west-2
       AWS_ENDPOINT: http://localstack:4566
       AWS_ACCESS_KEY_ID: LKIAQAAAAAAVNCBMPNSG

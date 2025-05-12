@@ -1,6 +1,6 @@
-# s3-sqs-bridge
+# xn--intenton-z2a.com
 
-`s3-sqs-bridge` S3 SQS Bridge for integrating Amazon S3 with SQS to generate an event stream of object digests.
+intentïon: The consumer front end of intentïon.com featuring repository0 and the agentic-lib.
 
 ## How to Contribute
 
@@ -42,4 +42,4 @@ The guidelines below apply to human or automated contributions:
 - **README:**
   - The README should begin with something inspired by the mission statement, and describing the current state of the repository (rather than the journey)
   - The README should include a link to MISSION.md, CONTRIBUTING.md, SETUP.md, and LICENSE.
-  - The README should include a link to the intentïon `agentic-lib` GitHub Repository which is https://github.com/xn-intenton-z2a/agentic-lib.
+  - The README should include a link to the intentïon `repository0` GitHub Repository which is https://github.com/xn-intenton-z2a/repository0.
