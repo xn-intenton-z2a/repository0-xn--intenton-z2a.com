@@ -1,0 +1,317 @@
+# .github/workflows/ci-automerge.yml
+#
+# This file is part of the example suite for `agentic-lib` see: https://github.com/xn-intenton-z2a/agentic-lib
+# This file is licensed under the MIT License. For details, see LICENSE-MIT
+
+name: ci-automerge
+concurrency: agentic-lib-merge-main
+run-name: "ci-automerge [${{ github.ref_name }}]"
+
+on:
+  pull_request:
+  check_suite:
+  workflow_dispatch:
+  workflow_call:
+    secrets:
+      PERSONAL_ACCESS_TOKEN:
+        required: false
+      CHATGPT_API_SECRET_KEY:
+        required: true
+  #workflow_run:
+  #  workflows:
+  #    - agent-issue-to-code
+  #    - agent-update-readme
+  #    - ci-update
+  #  types:
+  #    - completed
+  # secrets:
+  #   PERSONAL_ACCESS_TOKEN:
+  #     required: false
+  #   CHATGPT_API_SECRET_KEY:
+  #     required: true
+  schedule:
+    - cron: '53 4 */7 * *' # schedule-1
+    #- cron: '53 */4 * * *' # schedule-2
+    #- cron: '53 * * * *' # schedule-3
+    #- cron: '23,53 * * * *' # schedule-4
+
+env:
+  npmAuthOrganisation: ${{ vars.npmAuthOrganisation || '@xn-intenton-z2a' }}
+  s3BucketUrl: ${{ vars.s3BucketUrl || 's3://agentic-lib-telemetry-bucket/events/' }}
+  s3WebsiteBucketUrl: ${{ vars.s3WebsiteBucketUrl || 's3://agentic-lib-public-website-stats-bucket/' }}
+  iamActionsRoleArn: ${{ vars.iamActionsRoleArn || 'arn:aws:iam::541134664601:role/agentic-lib-github-actions-role' }}
+  iamStatsBucketWriterRoleArn: ${{ vars.iamStatsBucketWriterRoleArn || 'arn:aws:iam::541134664601:role/agentic-lib-deployment-role' }}
+  iamPublicWebsiteStatsBucketWriterRoleArn: ${{ vars.iamPublicWebsiteStatsBucketWriterRoleArn || 'arn:aws:iam::541134664601:role/agentic-lib-public-website-stats-bucket-writer-role' }}
+  pullRequestLabel: 'automerge'
+  branchPrefix: 'agentic-lib-issue-'
+
+jobs:
+
+  label:
+    runs-on: ubuntu-latest
+    steps:
+      - name: echo
+        shell: bash
+        run: |
+          echo "Label: ${{ env.pullRequestLabel }}"
+    outputs:
+      pullRequestLabel: ${{ env.pullRequestLabel }}
+
+  echo-event:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo 'Triggered by: ${{ github.event_name }}'
+
+  pull-request-event:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "Triggered by: pull_request"
+
+  check-suite-event:
+    if: github.event_name == 'check_suite'
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "Triggered by: check_suite"
+
+  schedule-event:
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "Triggered by: schedule"
+
+  workflow-dispatch-event:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "Triggered by: workflow_dispatch"
+
+  workflow-run-event:
+    if: github.event_name == 'workflow_run'
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "Triggered by: workflow_run"
+
+  pr:
+    needs: label
+    if: github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, needs.label.outputs.pullRequestLabel )
+    uses: 'xn-intenton-z2a/agentic-lib/.github/workflows/wfr-github-find-pr-from-pull-request.yml@6.4.7'
+
+  cs:
+    if: github.event_name == 'check_suite' && github.event.check_suite.conclusion == 'success'
+    uses: 'xn-intenton-z2a/agentic-lib/.github/workflows/wfr-github-find-pr-in-check-suite.yml@6.4.7'
+
+  ls:
+    needs: label
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || github.event_name == 'workflow_run'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Determine pull request number
+        id: get-pull
+        uses: actions/github-script@v7
+        env:
+          pullRequestLabel: ${{ needs.label.outputs.pullRequestLabel }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const pullRequestLabel = process.env.pullRequestLabel;
+            let pullNumber = ''
+            let branchName = '';
+            let issueNumber = '';
+            const { data: pullRequests } = await github.rest.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              per_page: 1,
+              sort: 'created',
+              direction: 'asc'
+            });
+            if (pullRequests.length > 0) {
+              const filteredPRs = pullRequests.filter(pr => pr.labels.some(label => label.name === pullRequestLabel ));
+              if (filteredPRs.length > 0) {
+                const pullRequest = filteredPRs[0];
+                pullNumber = pullRequest.number;
+                core.info(`Found open pull request with label ${pullRequestLabel}: #${pullRequest.number}.`);
+                core.info(JSON.stringify(pullRequest));
+              } else {
+                core.info(`No open pull request found with label ${pullRequestLabel}.`);
+                pullNumber = '';
+              }
+            } else {
+              pullNumber = '';
+              core.info('No open pull requests found.');
+            }
+            core.info(`pullNumber: ${pullNumber}`);
+            core.setOutput('pullNumber', pullNumber);
+          result-encoding: string
+    outputs:
+      pullNumber: ${{ steps.get-pull.outputs.pullNumber }}
+
+  merge-check:
+    if: always()
+    needs:
+      - pr
+      - cs
+      - ls
+    runs-on: ubuntu-latest
+    steps:
+      - name: get-pull
+        id: get-pull
+        uses: actions/github-script@v7
+        env:
+          prMerged: ${{ needs.pr.outputs.prMerged || 'false' }}
+          pullNumber: ${{ needs.pr.outputs.pullNumber || needs.cs.outputs.pullNumber || needs.ls.outputs.pullNumber || ''}}
+          shouldSkipMerge: ${{ needs.pr.outputs.shouldSkipMerge || 'false' }}
+        with:
+          script: |
+            // Merge outputs from pr-check, cs-check, and determine-ls.
+            // Only one of pr-check or cs-check should have run.
+            const prMerged = process.env.prMerged;
+            const pullNumber = process.env.pullNumber;
+            const branchPrefix = process.env.branchPrefix;
+            const shouldSkipMerge = process.env.shouldSkipMerge;
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+
+            core.setOutput('prMerged', `${prMerged}`);
+            core.setOutput('pullNumber', `${pullNumber}`);
+            core.setOutput('shouldSkipMerge', `${shouldSkipMerge}`);
+            core.info(`prMerged: '${prMerged}'`);
+            core.info(`pullNumber: '${pullNumber}'`);
+            core.info(`shouldSkipMerge: '${shouldSkipMerge}'`);
+            core.info(`branchPrefix '${branchPrefix}'`);
+
+            let branchName = '';
+            let issueNumber = '';
+            if( pullNumber) {
+              const { data: pullRequest } = await github.rest.pulls.get({
+                owner,
+                repo,
+                pull_number: pullNumber
+              });
+              branchName = pullRequest.head.ref;
+              core.info(`branchName '${branchName}'`);
+
+              const issueNumberMatch = branchName.replace(branchPrefix, '');
+              if (parseInt(issueNumberMatch)) {
+                issueNumber = `${parseInt(issueNumberMatch)}`;
+              } else {
+                issueNumber = '';
+              }
+            }
+
+            core.setOutput('branchName', branchName);            
+            core.setOutput('issueNumber', issueNumber);
+            core.info(`issueNumber '${issueNumber}'`);
+          result-encoding: string
+    outputs:
+      prMerged: ${{ steps.get-pull.outputs.prMerged }}
+      pullNumber: ${{ steps.get-pull.outputs.pullNumber }}
+      shouldSkipMerge: ${{ steps.get-pull.outputs.shouldSkipMerge }}
+      branchName: ${{ steps.get-pull.outputs.branchName }}
+      issueNumber: ${{ steps.get-pull.outputs.issueNumber }}
+
+  automerge:
+    needs:
+      - merge-check
+    if: ${{ always() && needs.merge-check.outputs.shouldSkipMerge != 'true' && needs.merge-check.outputs.pullNumber != '' }}
+    permissions:
+      contents: write
+      pull-requests: write
+      checks: write
+    uses: 'xn-intenton-z2a/agentic-lib/.github/workflows/wfr-github-merge-pr.yml@6.4.7'
+    with:
+      pullNumber: '${{ needs.merge-check.outputs.pullNumber }}'
+
+  validate-issue-number:
+    needs:
+      - merge-check
+    runs-on: ubuntu-latest
+    steps:
+      - id: validate-issue-number
+        run: |
+          issueNumber="${{ needs.merge-check.outputs.issueNumber }}"
+          if [[ -n "$issueNumber" && "$issueNumber" =~ [0-9] ]]; then
+            echo "[$issueNumber] is a valid issue number."
+            echo "isValid=true" >> $GITHUB_OUTPUT
+          else
+            echo "[$issueNumber] is not a valid issue number."
+            echo "isValid=false" >> $GITHUB_OUTPUT
+          fi
+    outputs:
+      isValid: ${{ steps.validate-issue-number.outputs.isValid }}
+
+  label-issue-after-automerge:
+    needs:
+      - merge-check
+      - automerge
+      - validate-issue-number
+    if: ${{ always() && ( needs.automerge.outputs.prMerged == 'true' && needs.merge-check.outputs.pullNumber != '' && needs.validate-issue-number.outputs.isValid == 'true' ) }}
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: read
+    uses: 'xn-intenton-z2a/agentic-lib/.github/workflows/wfr-github-label-issue.yml@6.4.7'
+    with:
+      pullNumber: ${{ needs.automerge.outputs.prMerged == 'true' && needs.merge-check.outputs.pullNumber || '' }}
+      issueNumber: '${{ needs.merge-check.outputs.issueNumber }}'
+
+  agentic-lib:
+    uses: 'xn-intenton-z2a/agentic-lib/.github/workflows/wfr-agent-config.yml@6.4.7'
+    with:
+      configPath: ${{ vars.configPath || '.github/agents/agentic-lib.yml' }}
+    secrets:
+      PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+
+  # Exceeds depth limit of 3
+  #select-next-issue:
+  #  needs:
+  #    - merge-check
+  #    - automerge
+  #    - validate-issue-number
+  #    - label-issue-after-automerge
+  #  if: always()
+  #  permissions:
+  #    issues: write
+  #    id-token: write
+  #  uses: 'xn-intenton-z2a/agentic-lib/.github/workflows/wfr-github-select-issue.yml@6.4.7'
+  #  with:
+  #    issueNumber: ''
+  #    selectionLabel: 'ready'
+  #    filterLabel: 'in-progress'
+  #  secrets:
+  #    CHATGPT_API_SECRET_KEY: ${{ secrets.CHATGPT_API_SECRET_KEY }}
+
+  #stats:
+  #  needs:
+  #    - merge-check
+  #    - automerge
+  #    - validate-issue-number
+  #    - label-issue-after-automerge
+  #    - select-next-issue
+  #  if: always()
+  #  permissions:
+  #    contents: write
+  #    id-token: write
+  #    pages: write
+  #  uses: 'xn-intenton-z2a/agentic-lib/.github/workflows/wfr-github-stats-to-aws.yml@6.4.7'
+  #  with:
+  #    cache: 'npm'
+  #    npmAuthOrganisation: "${{ vars.npmAuthOrganisation || '@xn-intenton-z2a' }}"
+  #    lastActivityName: "${{ github.workflow }}"
+  #    lastActivityBranchName: "${{ github.ref_name }}"
+  #    nextIssue: "[${{ needs.select-next-issue.outputs.issueNumber }}] ${{ needs.select-next-issue.outputs.issueTitle }} ${{ needs.select-next-issue.outputs.issueLabels }}"
+  #    public: ${{ needs.agentic-lib.outputs.docRoot }}
+  #    s3BucketUrl: "${{ vars.s3BucketUrl || 's3://agentic-lib-telemetry-bucket/events/' }}"
+  #    s3WebsiteBucketUrl: "${{ vars.s3WebsiteBucketUrl || 's3://agentic-lib-public-website-stats-bucket/' }}"
+  #    iamActionsRoleArn: "${{ vars.iamActionsRoleArn || 'arn:aws:iam::541134664601:role/agentic-lib-github-actions-role' }}"
+  #    iamStatsBucketWriterRoleArn: "${{ vars.iamStatsBucketWriterRoleArn || 'arn:aws:iam::541134664601:role/agentic-lib-deployment-role' }}"
+  #    iamPublicWebsiteStatsBucketWriterRoleArn: "${{ vars.iamPublicWebsiteStatsBucketWriterRoleArn || 'arn:aws:iam::541134664601:role/agentic-lib-public-website-stats-bucket-writer-role' }}"
+  #  secrets:
+  #    PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}

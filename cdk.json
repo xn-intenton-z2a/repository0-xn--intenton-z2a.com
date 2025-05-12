@@ -1,0 +1,28 @@
+{
+  "app": "mvn exec:java -Dexec.mainClass=com.intentïon.S3SqsBridge.S3SqsBridgeApp",
+  "synthStacks": "npx cdk synth S3SqsBridgeStack --ci true --strict --validation",
+  "deployStacks": "npx cdk deploy S3SqsBridgeStack --require-approval never --ci true --verbose --strict --validation",
+  "context": {
+    "s3WriterArnPrinciple": "arn:aws:iam::541134664601:user/polycode-deploy",
+    "s3WriterRoleName": "s3-sqs-bridge-bucket-writer-role",
+    "s3BucketName": "s3-sqs-bridge-bucket",
+    "s3ObjectPrefix": "events/",
+    "s3UseExistingBucket": "false",
+    "s3RetainBucket": "false",
+    "sqsSourceQueueName": "s3-sqs-bridge-source-queue",
+    "sqsReplayQueueName": "s3-sqs-bridge-replay-queue",
+    "sqsDigestQueueName": "s3-sqs-bridge-digest-queue",
+    "sqsDigestQueueArn": "arn:aws:sqs:eu-west-2:541134664601:s3-sqs-bridge-digest-queue",
+    "sqsUseExistingDigestQueue": "false",
+    "sqsRetainDigestQueue": "false",
+    "offsetsTableName": "s3-sqs-bridge-offsets-table",
+    "projectionsTableName": "s3-sqs-bridge-projections-table",
+    "lambdaEntry": "src/lib/main.",
+    "replayBatchLambdaFunctionName": "s3-sqs-bridge-replay-batch-function",
+    "sourceLambdaFunctionName": "s3-sqs-bridge-source-function",
+    "replayLambdaFunctionName": "s3-sqs-bridge-replay-function",
+    "replayBatchLambdaHandlerFunctionName": "replayBatchLambdaHandler",
+    "sourceLambdaHandlerFunctionName": "sourceLambdaHandler",
+    "replayLambdaHandlerFunctionName": "replayLambdaHandler"
+  }
+}
