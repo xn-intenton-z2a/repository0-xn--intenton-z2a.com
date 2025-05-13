@@ -95,6 +95,7 @@ public class LogForwardingBucket extends Stack {
         public IBucket build() {
             final String bucketName = buildBucketName();
             final String functionName = buildFunctionName();
+            logger.info("Setting expiration period to %d days for %s".formatted(retentionPeriodDays, idPrefix));
             final IBucket logBucket = Bucket.Builder
                     .create(scope, "%sLogBucket".formatted(idPrefix))
                     .bucketName(bucketName)

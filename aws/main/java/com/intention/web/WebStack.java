@@ -75,14 +75,15 @@ public class WebStack extends Stack {
         public String hostedZoneName;
         public String hostedZoneId;
         public String subDomainName;
-        public boolean useExistingHostedZone;
-        public boolean useExistingCertificate;
-        public boolean cloudTrailEnabled;
+        public String useExistingHostedZone;
+        public String certificateId;
+        public String useExistingCertificate;
+        public String cloudTrailEnabled;
         public String cloudTrailLogGroupPrefix;
-        public int cloudTrailLogGroupRetentionPeriodDays;
-        public int accessLogGroupRetentionPeriodDays;
-        public boolean s3UseExistingBucket;
-        public boolean s3RetainBucket;
+        public String cloudTrailLogGroupRetentionPeriodDays;
+        public String accessLogGroupRetentionPeriodDays;
+        public String s3UseExistingBucket;
+        public String s3RetainBucket;
         public String cloudTrailEventSelectorPrefix;
         public String logS3ObjectEventHandlerSource;
         public String logGzippedS3ObjectEventHandlerSource;
@@ -126,17 +127,22 @@ public class WebStack extends Stack {
             return this;
         }
 
-        public Builder useExistingHostedZone(boolean useExistingHostedZone) {
+        public Builder useExistingHostedZone(String useExistingHostedZone) {
             this.useExistingHostedZone = useExistingHostedZone;
             return this;
         }
 
-        public Builder useExistingCertificate(boolean useExistingCertificate) {
+        public Builder certificateId(String certificateId) {
+            this.certificateId = certificateId;
+            return this;
+        }
+
+        public Builder useExistingCertificate(String useExistingCertificate) {
             this.useExistingCertificate = useExistingCertificate;
             return this;
         }
 
-        public Builder cloudTrailEnabled(boolean cloudTrailEnabled) {
+        public Builder cloudTrailEnabled(String cloudTrailEnabled) {
             this.cloudTrailEnabled = cloudTrailEnabled;
             return this;
         }
@@ -146,22 +152,22 @@ public class WebStack extends Stack {
             return this;
         }
 
-        public Builder cloudTrailLogGroupRetentionPeriodDays(int cloudTrailLogGroupRetentionPeriodDays) {
+        public Builder cloudTrailLogGroupRetentionPeriodDays(String cloudTrailLogGroupRetentionPeriodDays) {
             this.cloudTrailLogGroupRetentionPeriodDays = cloudTrailLogGroupRetentionPeriodDays;
             return this;
         }
 
-        public Builder accessLogGroupRetentionPeriodDays(int accessLogGroupRetentionPeriodDays) {
+        public Builder accessLogGroupRetentionPeriodDays(String accessLogGroupRetentionPeriodDays) {
             this.accessLogGroupRetentionPeriodDays = accessLogGroupRetentionPeriodDays;
             return this;
         }
 
-        public Builder s3UseExistingBucket(boolean s3UseExistingBucket) {
+        public Builder s3UseExistingBucket(String s3UseExistingBucket) {
             this.s3UseExistingBucket = s3UseExistingBucket;
             return this;
         }
 
-        public Builder s3RetainBucket(boolean s3RetainBucket) {
+        public Builder s3RetainBucket(String s3RetainBucket) {
             this.s3RetainBucket = s3RetainBucket;
             return this;
         }
@@ -203,6 +209,7 @@ public class WebStack extends Stack {
 
     }
 
+    // TODO: Move to cdk.json
     public static final List<AbstractMap.SimpleEntry<Pattern, String>> domainNameMappings = List.of(
             new AbstractMap.SimpleEntry<>(Pattern.compile("xn--intenton-z2a"), "intention")
     );
@@ -213,7 +220,7 @@ public class WebStack extends Stack {
     private String buildCloudTrailLogBucketName(String dashedDomainName) { return "%s-cloud-trail".formatted(dashedDomainName); }
     private String buildOriginAccessLogBucketName(String dashedDomainName) { return "%s-origin-access-logs".formatted(dashedDomainName); }
     private String buildDistributionAccessLogBucketName(String dashedDomainName) { return "%s-distribution-access-logs".formatted(dashedDomainName);}
-    public String buildCertificateArn(final String domainName) { return "arn:aws:acm:us-east-1:%s:certificate/%s".formatted(this.getAccount(), domainName);}
+    public String buildCertificateArn(final String id) { return "arn:aws:acm:us-east-1:%s:certificate/%s".formatted(this.getAccount(), id);}
 
     public WebStack(Construct scope, String id, WebStack.Builder builder) {
         this(scope, id, null, builder);
@@ -226,17 +233,18 @@ public class WebStack extends Stack {
         String hostedZoneName = this.getConfigValue(builder.hostedZoneName, "hostedZoneName");
         String hostedZoneId = this.getConfigValue(builder.hostedZoneId, "hostedZoneId");
         String subDomainName = this.getConfigValue(builder.subDomainName, "subDomainName");
-        boolean useExistingHostedZone = Boolean.parseBoolean(this.getConfigValue(Boolean.toString(builder.useExistingHostedZone), "useExistingHostedZone"));
-        boolean useExistingCertificate = Boolean.parseBoolean(this.getConfigValue(Boolean.toString(builder.useExistingCertificate), "useExistingCertificate"));
-        boolean cloudTrailEnabled = Boolean.parseBoolean(this.getConfigValue(Boolean.toString(builder.cloudTrailEnabled), "cloudTrailEnabled"));
+        boolean useExistingHostedZone = Boolean.parseBoolean(this.getConfigValue(builder.useExistingHostedZone, "useExistingHostedZone"));
+        String certificateId = this.getConfigValue(builder.certificateId, "certificateId");
+        boolean useExistingCertificate = Boolean.parseBoolean(this.getConfigValue(builder.useExistingCertificate, "useExistingCertificate"));
+        boolean cloudTrailEnabled = Boolean.parseBoolean(this.getConfigValue(builder.cloudTrailEnabled, "cloudTrailEnabled"));
         String cloudTrailLogGroupPrefix = this.getConfigValue(builder.cloudTrailLogGroupPrefix, "cloudTrailLogGroupPrefix");
-        int cloudTrailLogGroupRetentionPeriodDays = Integer.parseInt(this.getConfigValue(Integer.toString(builder.cloudTrailLogGroupRetentionPeriodDays), "cloudTrailLogGroupRetentionPeriodDays"));
-        int accessLogGroupRetentionPeriodDays = Integer.parseInt(this.getConfigValue(Integer.toString(builder.accessLogGroupRetentionPeriodDays), "accessLogGroupRetentionPeriodDays"));
+        int cloudTrailLogGroupRetentionPeriodDays = Integer.parseInt(this.getConfigValue(builder.cloudTrailLogGroupRetentionPeriodDays, "cloudTrailLogGroupRetentionPeriodDays"));
+        int accessLogGroupRetentionPeriodDays = Integer.parseInt(this.getConfigValue(builder.accessLogGroupRetentionPeriodDays, "accessLogGroupRetentionPeriodDays"));
         this.domainName = this.buildDomainName(env, subDomainName, hostedZoneName);
         String dashedDomainName = this.buildDashedDomainName(this.domainName);
         String originBucketName = this.buildOriginBucketName(dashedDomainName);
-        boolean s3UseExistingBucket = Boolean.parseBoolean(this.getConfigValue(Boolean.toString(builder.s3UseExistingBucket), "s3UseExistingBucket"));
-        boolean s3RetainBucket = Boolean.parseBoolean(this.getConfigValue(Boolean.toString(builder.s3RetainBucket), "s3RetainBucket"));
+        boolean s3UseExistingBucket = Boolean.parseBoolean(this.getConfigValue(builder.s3UseExistingBucket, "s3UseExistingBucket"));
+        boolean s3RetainBucket = Boolean.parseBoolean(this.getConfigValue(builder.s3RetainBucket, "s3RetainBucket"));
         String cloudTrailEventSelectorPrefix = this.getConfigValue(builder.cloudTrailEventSelectorPrefix, "cloudTrailEventSelectorPrefix");
         String cloudTrailLogBucketName = this.buildCloudTrailLogBucketName(dashedDomainName);
         String originAccessLogBucketName = this.buildOriginAccessLogBucketName(dashedDomainName);
@@ -252,7 +260,7 @@ public class WebStack extends Stack {
         } else {
             // Web bucket as origin for the CloudFront distribution with a bucket for access logs forwarded to CloudWatch
             this.originAccessLogBucket = LogForwardingBucket.Builder
-                    .create(this, "OriginAccessLogBucket", logS3ObjectEventHandlerSource, LogS3ObjectEvent.class)
+                    .create(this, "OriginAccess", logS3ObjectEventHandlerSource, LogS3ObjectEvent.class)
                     .bucketName(originAccessLogBucketName)
                     .functionNamePrefix("origin-access-")
                     .retentionPeriodDays(accessLogGroupRetentionPeriodDays)
@@ -391,13 +399,13 @@ public class WebStack extends Stack {
         }
 
         if (useExistingCertificate) {
-            var certificateArn = this.buildCertificateArn(domainName);
+            var certificateArn = this.buildCertificateArn(certificateId);
             this.certificate = Certificate.fromCertificateArn(this, "Certificate", certificateArn);
         } else {
             this.certificate = Certificate.Builder
                     .create(this, "Certificate")
                     .domainName(this.domainName)
-                    .certificateName(this.domainName)
+                    .certificateName(certificateId)
                     .validation(CertificateValidation.fromDns(this.hostedZone))
                     .transparencyLoggingEnabled(true)
                     .build();
@@ -405,7 +413,7 @@ public class WebStack extends Stack {
 
         // Create the CloudFront distribution using the web website bucket as the origin and Origin Access Identity
         this.distributionAccessLogBucket = LogForwardingBucket.Builder
-                .create(this, "DistributionAccessLogBucket", logGzippedS3ObjectEventHandlerSource, LogGzippedS3ObjectEvent.class)
+                .create(this, "DistributionAccess", logGzippedS3ObjectEventHandlerSource, LogGzippedS3ObjectEvent.class)
                 .bucketName(distributionAccessLogBucketName)
                 .functionNamePrefix("distribution-access-")
                 .retentionPeriodDays(accessLogGroupRetentionPeriodDays)

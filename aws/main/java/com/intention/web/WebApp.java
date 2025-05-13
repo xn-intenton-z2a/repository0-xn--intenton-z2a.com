@@ -7,21 +7,20 @@ public class WebApp {
     public static void main(final String[] args) {
         App app = new App();
 
-        String cloudTrailLogGroupRetentionPeriodDays = System.getenv("CLOUD_TRAIL_LOG_GROUP_RETENTION_PERIOD_DAYS") == null ? "0" : System.getenv("CLOUD_TRAIL_LOG_GROUP_RETENTION_PERIOD_DAYS");
-        String accessLogGroupRetentionPeriodDays = System.getenv("ACCESS_LOG_GROUP_RETENTION_PERIOD_DAYS") == null ? "0" : System.getenv("ACCESS_LOG_GROUP_RETENTION_PERIOD_DAYS");
         WebStack stack = WebStack.Builder.create(app, "WebStack")
                 .env(System.getenv("ENV_NAME"))
                 .hostedZoneName(System.getenv("HOSTED_ZONE_NAME"))
                 .hostedZoneId(System.getenv("HOSTED_ZONE_ID"))
                 .subDomainName(System.getenv("SUB_DOMAIN_NAME"))
-                .useExistingHostedZone(Boolean.parseBoolean(System.getenv("USE_EXISTING_HOSTED_ZONE")))
-                .useExistingCertificate(Boolean.parseBoolean(System.getenv("USE_EXISTING_CERTIFICATE")))
-                .cloudTrailEnabled(Boolean.parseBoolean(System.getenv("CLOUD_TRAIL_ENABLED")))
+                .useExistingHostedZone(System.getenv("USE_EXISTING_HOSTED_ZONE"))
+                .certificateId(System.getenv("CERTIFICATE_ID"))
+                .useExistingCertificate(System.getenv("USE_EXISTING_CERTIFICATE"))
+                .cloudTrailEnabled(System.getenv("CLOUD_TRAIL_ENABLED"))
                 .cloudTrailLogGroupPrefix(System.getenv("CLOUD_TRAIL_LOG_GROUP_PREFIX"))
-                .cloudTrailLogGroupRetentionPeriodDays(Integer.parseInt(cloudTrailLogGroupRetentionPeriodDays))
-                .accessLogGroupRetentionPeriodDays(Integer.parseInt(accessLogGroupRetentionPeriodDays))
-                .s3UseExistingBucket(Boolean.parseBoolean(System.getenv("USE_EXISTING_BUCKET")))
-                .s3RetainBucket(Boolean.parseBoolean(System.getenv("RETAIN_BUCKET")))
+                .cloudTrailLogGroupRetentionPeriodDays(System.getenv("CLOUD_TRAIL_LOG_GROUP_RETENTION_PERIOD_DAYS"))
+                .accessLogGroupRetentionPeriodDays(System.getenv("ACCESS_LOG_GROUP_RETENTION_PERIOD_DAYS"))
+                .s3UseExistingBucket(System.getenv("USE_EXISTING_BUCKET"))
+                .s3RetainBucket(System.getenv("RETAIN_BUCKET"))
                 .cloudTrailEventSelectorPrefix(System.getenv("OBJECT_PREFIX"))
                 .logS3ObjectEventHandlerSource(System.getenv("LOG_S3_OBJECT_EVENT_HANDLER_SOURCE"))
                 .logGzippedS3ObjectEventHandlerSource(System.getenv("LOG_GZIPPED_S3_OBJECT_EVENT_HANDLER_SOURCE"))
