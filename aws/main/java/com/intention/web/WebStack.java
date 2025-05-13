@@ -341,6 +341,7 @@ public class WebStack extends Stack {
                 LogGroup originBucketLogGroup = LogGroup.Builder.create(this, "OriginBucketLogGroup")
                         .logGroupName("%s%s".formatted(cloudTrailLogGroupPrefix, this.originBucket.getBucketName()))
                         .retention(cloudTrailLogGroupRetentionPeriod)
+                        .removalPolicy(s3RetainBucket ? RemovalPolicy.RETAIN : RemovalPolicy.DESTROY)
                         .build();
                 Trail originBucketTrail = Trail.Builder.create(this, "OriginBucketTrail")
                         .trailName(cloudTrailLogBucketName)
