@@ -1,98 +1,341 @@
-# s3-sqs-bridge (Versioned Amazon S3 Object Put Event replay capable queuing to SQS)
+# intentïon
 
-s3-sqs-bridge integrates Amazon S3 with AWS SQS to enable versioned event replay and real-time processing using Lambda backed by a resilient PostgreSQL projection system. The GitHub Event Projections Lambda handler now features robust connection retries, enhanced logging with sensitive data masking, strict schema validation using Zod, basic in-memory metrics collection to track event processing performance, and optional dead-letter queue support for failed records.
+intentïon: The feedback loop of innovation
 
-This repository includes:
+Test change.
 
-- AWS CloudFormation/CDK stacks for setting up the necessary AWS infrastructure.
-- A Node.js Lambda function for processing S3 events forwarded to SQS.
-- A GitHub Event Projections Lambda handler implemented in **src/lib/main.js** that processes GitHub event messages from a dedicated SQS queue, validates them, and creates/upserts projections in PostgreSQL with detailed logging, retry logic, metrics collection, and dead-letter queue routing.
-- A comprehensive CLI for event replay, projection processing, and health checks.
+`xn--intenton-z2a.com` is a project by Polycode Limited which presents the intentïon home page: https://xn--intenton-z2a.com/
 
-For the full mission statement, see [MISSION.md](MISSION.md). For contribution guidelines, please refer to [CONTRIBUTING.md](CONTRIBUTING.md). Setup instructions are provided in [SETUP.md], and licensing details in [LICENSE](LICENSE).
-Additionally, visit the intentïon agentic-lib on GitHub: [agentic-lib](https://github.com/xn-intenton-z2a/agentic-lib).
+## TODO
 
-## Key Features
+Public brand:
+- [x] Website for intentïon.com text light, light grey or misty: https://xn--intenton-z2a.com/
+- [x] Logo selection
+- [x] Sign up for LinkTree
+- [ ] Swap to use repository0 template.
+- [~] CI deployment
+- [~] CDK deploy
+- [~] Automated activity generation from showcased projects
+- [ ] "What is your intentïon?" as a tagline and pronunciation guide.
+- [ ] "What is your intentïon?" submission box allowing user submitted content with terms and conditions.
+- [ ] Showcase links
+- [ ] Automated feed generation
+- [ ] Add contact bots for socials
+- [ ] Add contact bots via Slack / Discord or Redit
+- [ ] Register: intentiion.com, intentionai.com, intentiionai.com, intentiionaii.com
+- [ ] Brand ownership
+- [ ] Brand protection
+- [ ] Web analytics
+- [ ] Link to Linktree
+- [ ] Audience Dashboard
 
-- **Dead-Letter Queue Support:** Failed GitHub event records after all retry attempts can be routed to an SQS dead-letter queue (when configured via `DEAD_LETTER_QUEUE_URL`).
-- **Robust Defaults:** Sensible default values prevent misconfiguration.
-- **Enhanced Retry Logic:** Exponential backoff retry strategy for PostgreSQL connections and queries.
-- **Strict Validation:** Input validation using Zod for GitHub event payloads.
-- **In-Memory Metrics:** Tracks total events, successes, skips, DB failures, retry attempts, and dead-lettered events.
-- **HTTP Endpoints:** `/metrics` and `/status` endpoints for real-time metrics and health checks using Express.
-- **High Availability:** Designed for scalable deployment on AWS Fargate Spot.
 
-## Configuration
-
-Environment variables configure AWS services and PostgreSQL parameters. Defaults are used if variables are not set:
-
-- BUCKET_NAME
-- OBJECT_PREFIX
-- REPLAY_QUEUE_URL
-- DIGEST_QUEUE_URL
-- OFFSETS_TABLE_NAME
-- PROJECTIONS_TABLE_NAME
-- SOURCE_LAMBDA_FUNCTION_NAME
-- AWS_ENDPOINT
-
-PostgreSQL specific variables:
-
-- PG_CONNECTION_STRING: PostgreSQL connection string (default: `postgres://user:pass@localhost:5432/db`)
-- GITHUB_PROJECTIONS_TABLE: Table for GitHub event projections (default: `github_event_projections`)
-- GITHUB_EVENT_QUEUE_URL: SQS URL for GitHub events (default: `https://test/000000000000/github-event-queue-test`)
-
-Retry configuration for PostgreSQL:
-
-- PG_MAX_RETRIES: Maximum retry attempts (default: 3)
-- PG_RETRY_DELAY_MS: Delay in milliseconds between retries (default: 1000)
-
-Dead-letter queue configuration:
-
-- DEAD_LETTER_QUEUE_URL: SQS queue URL for dead-lettering failed GitHub event projections (optional)
-
-## Metrics
-
-The GitHub Event Projection handler now collects basic in-memory metrics during event processing:
-
-- **totalEvents:** Total number of events received.
-- **successfulEvents:** Number of events processed successfully.
-- **skippedEvents:** Number of events skipped due to invalid JSON or failed validation.
-- **dbFailures:** Number of events that encountered database query failures after retry attempts.
-- **dbRetryCount:** Total number of database retry attempts.
-- **deadLetterEvents:** Number of events routed to the dead-letter queue after exhausting retries.
-
-Metrics are logged after processing and can be accessed programmatically via the exported `getMetrics()` function.
-
-## Usage
-
-### CLI Options
-
-- `--help`: Show usage instructions.
-- `--source-projection`: Run the Lambda handler for processing source S3 events.
-- `--replay-projection`: Run the Lambda handler for replayed events.
-- `--replay`: Replay all S3 object versions in order.
-- `--healthcheck`: Start an HTTP health check server on port 8080.
-- `--metrics`: Start HTTP metrics endpoint on port defined by `METRICS_PORT` (default 3000).
-- `--status-endpoint`: Start HTTP status endpoint on port defined by `STATUS_PORT` (default 3000).
-
-### Running Locally
-
-Use the following npm scripts:
-
-- `npm start` to run the GitHub event projection handler (located in **src/lib/main.js**).
-- `npm run healthcheck` to start the health check server.
-- `npm run replay` to replay S3 events.
-
-Note: When running locally with a dummy event (i.e. no records), the handler will short-circuit and return success without attempting a database connection.
-
-## Testing
-
-This project uses Vitest for unit testing. Run the tests with:
-
-```bash
-npm test
+LinkedIn - https://www.linkedin.com/company/intentïon
+```
+-> intentïon.com
+-> Personal LinkedIn
+-> Shared showcased projects posts crediting the service or API used
+-> No direct messages
+-> Comments and mentions are an [Inbox]
 ```
 
-## License
+Facebook - https://www.facebook.com/profile.php?id=61559328506140
+```
+-> intentïon.com
+-> Shared showcased projects posts crediting the service or API used
+-> No direct messages
+-> Comments and mentions are an [Inbox]
+```
 
-Distributed under the MIT License. See [LICENSE](LICENSE) for details.
+Twitter - https://twitter.com/intentiionai
+```
+-> intentïon.com
+-> Re-Tweets of showcased projects tweets crediting the service or API used
+-> No direct messages
+-> Replies and mentions are an [Inbox]
+```
+
+Instagram - https://www.instagram.com/intentiionaii
+```
+-> LinkTree
+-> Shared showcased projects posts crediting the service or API used
+-> No direct messages
+-> Comments and mentions are an [Inbox]
+```
+
+LinkTree - https://linktr.ee/intentiion
+```
+-> intentïon.com
+-> LinkedIn
+-> Facebook
+-> Twitter
+-> Instagram
+```
+
+GitHub (showcase projects)
+```
+-> How to seed a new similar project [Goal]
+-> Featured intentïon services
+-> Featured intentïon APIs
+-> Download and clone stats
+-> CI stats
+-> Attribution documents
+-> Contributor guidelines
+```
+
+GitHub (projects)
+```
+-> How to seed a project [Goal]
+-> Examples (such as the showcase projects)
+-> Activity in social media
+-> Discussion forum
+-> Wiki
+-> Ticketing system [Inbox]
+```
+
+Request email
+```
+-> Link on intentïon.com to a form to request contact by email [Inbox]
+```
+
+# intentïon: The Feedback Loop of Innovation
+
+intentïon is the beginning of an iterative journey where AI meets real-world interaction and creative problem-solving. Intentïon is built around the concept that conversational AI that engages in a continuous cycle of feedback and enhancement.
+
+Starting with a number-guessing game that teaches the AI the basics of interaction and response adjustment, intentïon paves the way for AI to step out of the virtual domain and interact with the physical environment. This project embodies the integration of AI into real-world applications, foreseeing a future where AI, with resources like 3D printing and drone technology, could manifest a tangible presence and contribute substantively to tasks that were once the sole domain of humans.
+
+Going beyond the fundamentals, intentïon aspires to harness the vast potential of social media, envisioning an AI that can not only create and manage an online presence but also attract a following and engage in complex activities such as securing sponsorships. This leap from simple number prediction to negotiating the social media landscape marks a significant step in AI's evolution, rooted in the belief that a careful blend of machine learning and human oversight can push the boundaries of what we perceive as achievable.
+
+What intentïon brings to the table is not just a promise but a steady march towards realizing the intersection of AI capabilities and human aspirations. It invites us to ponder, as we witness this fusion of technology and creativity unfold, "What is your intentïon?"
+
+## Pronunciation
+
+intentïon. Pronunciation: /ɪnˈtɛnʃən/. The diaeresis? It's a style thing (and .com was available for 13 bucks); you are invited to pronounce your intentïon as you please.
+
+## Glossary
+
+- **intentïon**: An *intentïon* can be *accomplished* in a single *iteration* with at least one *parameter set*.
+- **iteration**: An *iteration* is a finite pre-defined *workflow* of *actions* initiated by a *request*.
+- **request**: A *request* is described by a **parameter set** (the inputs) and it has a *response* (the outputs).
+- **workflow**: A *workflow* is a *parameterised* network of procedural structures. e.g. A flowchart description of a process.
+- **action**: An *action* uses an *expression* of *capabilities* to transform an input into an output.
+- **expression**: An *expression* is a functional structure. e.g. A mathematical formula.
+- **capability**: A *capability* is a functional unit. e.g. A mathematical operation.
+- **response**: A *response* is the output of a *workflow*.
+- **accomplished**: An *intentïon* infers the state when *accomplished*. e.g. An intention to walk is accomplished when walking.
+- **parameterised**: A *workflow* is *parameterised* using a *heuristic* to select a *parameter set* from the *parameter search space*.
+- **parameter search space**: The *parameter search space* is every *parameter set* requires to access all the navigable paths through the network and the full range of inputs for the *actions*.
+- **parameter set**: A *parameter set* is a set of inputs that can be used to execute an *iteration*.
+- **heuristic**: A *heuristic* can apply the *intentïon* to select a *parameter set* from the *search space*.
+- **enhancement**: An *enhancement* is the *heuristic* applied to previous request & responses and the *intentïon*.
+
+# Getting Started
+
+# Infrastructure setup
+
+A user with full IAM access to create a role will be needed to execute the Terraform scripts which in turn to create
+the infrastructure level resources such as:
+* The IAM role for the infrastructure user
+
+Software required:
+* [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html)
+* [jq](https://stedolan.github.io/jq/download/)
+* [Terraform](https://www.terraform.io/downloads.html)
+* Terragrunt
+* AWS CDK
+
+Terragrunt:
+```shell
+ % brew install terragrunt
+```
+
+Install the AWS CDK and ensure that version 2 is installed:
+````bash
+ % npm install -g aws-cdk
+ % cdk --version
+2.140.0 (build 46168aa)
+````
+
+Create the IAM role for the infrastructure user:
+```shell
+ % export AWS_ACCOUNT_ID='541134664601'
+ % export AWS_ACCESS_KEY_ID='...redacted...'
+ % export AWS_SECRET_ACCESS_KEY='...redacted...'
+ % aws sts get-caller-identity                                            
+{
+    "UserId": "AIDAI5QAEKWGGXBYLAZ5G",
+    "Account": "541134664601",
+    "Arn": "arn:aws:iam::541134664601:user/polycode-deploy"
+}
+ % ./scripts/aws-create-infrastructure-role.sh
+```
+
+Add GitHub as an identity provider:
+To be able to authenticate with OIDC from GitHub you will first need to set up GitHub as a federated identity provider in your AWS account.
+1. To do that, navigate to the AWS IAM console and click on Identity Providers on the left-hand side.
+2. Then, click on the Add provider button.
+3. For Provider type, select OpenID Connect.
+4. For Provider URL, enter https://token.actions.githubusercontent.com
+5. Click on Get thumbprint to get the thumbprint of the provider
+6. For Audience, enter `sts.amazonaws.com`
+   See:
+   ![setup-add-identity-provider](docs/setup-add-identity-provider.png)
+
+## First deployment
+
+Bootstrap the stack with a state bucket
+```bash
+ % source ./scripts/aws-reset-assumed-role.sh
+{
+    "UserId": "AIDAX37RDWOMUJDFBDE6Y",
+    "Account": "541134664601",
+    "Arn": "arn:aws:iam::541134664601:user/polycode-default-account"
+}
+ % source ./scripts/aws-assume-deployment-role.sh
+{
+    "UserId": "AROA45MW5HDLRUMTIBS4I:WorkstationSession-for-antony",
+    "Account": "887764105431",
+    "Arn": "arn:aws:sts::887764105431:assumed-role/intention-com-web-deployment-role/WorkstationSession-for-antony"
+}
+ % TODO...
+````
+
+The commit and push and the following jobs should run:
+* `infrastructure-apply.yml` - Create infrastructure
+* `dev-build-deploy.yml` - Build and deploy dev
+
+The development side shall now be available at:
+
+TODO website: http://test.com
+
+## Manual infrastructure tear-down
+
+Run the following in sequence:
+```shell
+ % source ./scripts/aws-assume-infrastructure-role.sh
+ % terragrunt run-all destroy -auto-approve --terragrunt-non-interactive --terragrunt-working-dir ./infrastructure
+ % ./scripts/aws-delete-infrastructure-role.sh
+```
+
+# Handy scripts
+
+Cat the workflow and source files to datestamp the files in the export directory.
+```shell
+./export-source.sh
+```
+
+## Local access to AWS
+
+You can assume the infrastructure role locally and use Terragrunt to create the infrastructure level resources by running:
+```shell
+ % source ./scripts/aws-reset-assumed-role.sh
+{
+    "UserId": "AIDAX37RDWOMUJDFBDE6Y",
+    "Account": "541134664601",
+    "Arn": "arn:aws:iam::541134664601:user/polycode-default-account"
+}
+ % source ./scripts/aws-assume-infrastructure-role.sh
+ {
+    "UserId": "AROA45MW5HDLQ2F53F3V4:WorkstationSession-for-antony",
+    "Account": "541134664601",
+    "Arn": "arn:aws:sts::541134664601:assumed-role/intention-com-web-infrastructure-role/WorkstationSession-for-antony"
+}
+ % terragrunt apply -auto-approve --terragrunt-non-interactive --terragrunt-working-dir ./infrastructure
+```
+
+You can assume the deployment role locally by running:
+```shell
+ % source ./scripts/aws-reset-assumed-role.sh
+{
+    "UserId": "AIDAX37RDWOMUJDFBDE6Y",
+    "Account": "541134664601",
+    "Arn": "arn:aws:iam::541134664601:user/polycode-default-account"
+}
+ % source ./scripts/aws-assume-deployment-role.sh
+{
+    "UserId": "AROA45MW5HDLRUMTIBS4I:WorkstationSession-for-antony",
+    "Account": "887764105431",
+    "Arn": "arn:aws:sts::887764105431:assumed-role/intention-com-web-deployment-role/WorkstationSession-for-antony"
+}
+ %
+```
+
+# Prompts
+
+Website brief:
+```shell
+I want a single index.html file that is well-formed, declares
+and adheres to all the latest accessibility guidelines and is
+responsively rendered on all mainstream devices.
+
+The page should render the word intentïon when the screen is
+tapped (or mouse moved) for 3 seconds then fade out.
+
+The word intentïon should be in dark grey (charcoal?) and
+as wide as the horizontal viewport. The background should be
+light grey, almost white with a hint of yellow (like fog
+under bright sunlight).
+
+The background (full screen, no text) should have the
+attached images all fading in and out of transparency at
+different rates.
+
+Please show the HTML (all inline JS and CSS) the images
+and any libraries you pull in would be links.
+```
+
+## CDK  Installation and initialisation of a project deployment directory
+
+Create a deployment directory, initialise it with a CDK project then move the files to the root of the repository:
+````bash
+ % mkdir account
+ % cd ./account
+ % cdk init app --language java
+Applying project template app for java
+# Welcome to your CDK Java project!
+...
+ % rm -rf target README .gitignore
+mv -v * ../.
+cdk.json -> .././cdk.json
+pom.xml -> .././pom.xml
+src -> .././src
+ % cd ..
+ % rm -rf ./account
+````
+
+## The CDK README
+
+The `cdk.json` file tells the CDK Toolkit how to execute your app.
+
+It is a [Maven](https://maven.apache.org/) based project, so you can open this project with any Maven compatible Java IDE to build and run tests.
+
+Useful commands:
+
+* `./mvnw package`     compile and run tests
+* `cdk ls`          list all stacks in the app
+* `cdk synth`       emits the synthesized CloudFormation template
+* `cdk deploy`      deploy this stack to your default AWS account/region
+* `cdk diff`        compare deployed stack with current state
+* `cdk docs`        open CDK documentation
+
+# Ownership
+
+`xn--intenton-z2a.com` is a project by Polycode Limited which presents the intentïon home page: https://xn--intenton-z2a.com/
+
+# License
+
+Copyright (c) 2024 Polycode Limited
+
+All rights reserved.
+
+This software and associated documentation files (the "Software") are the property of Polycode Limited and are strictly confidential.
+This Software is solely for use by individuals or entities that have been granted explicit permission by Polycode Limited.
+This Software may not be copied, modified, distributed, sublicensed, or used in any way without the express written permission of Polycode Limited.
+
+# Chats
+
+intentïon: brand: https://chat.openai.com/share/(TODO: ChatGPT share link is broken)
+
+# Thank you
+
+Thank you for your interest in intentïon. Please be careful with our public brand.

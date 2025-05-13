@@ -13,17 +13,15 @@ paths:
   libraryDocumentsPath:
     path: 'library/'
     permissions: ['write']
-    limit: 8
+    limit: 32
   featuresPath:
     path: 'features/'
-    permissions: ['write']
     limit: 0
 
   # Filepaths for engineer workflows
   contributingFilepath:
     path: 'CONTRIBUTING.md'
   targetTestsPath:
-    permissions: ['write']
     path: 'tests/unit/'
   otherTestsPaths:
     paths: []
@@ -33,10 +31,8 @@ paths:
     paths: []
   dependenciesFilepath:
     path: 'package.json'
-    permissions: ['write']
   documentationPath:
     path: 'docs/'
-    permissions: ['write']
 
   # Filepaths for maintainer workflows
   formattingFilepath:
