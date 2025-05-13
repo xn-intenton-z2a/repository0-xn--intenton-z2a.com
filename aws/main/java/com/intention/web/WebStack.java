@@ -269,7 +269,67 @@ public class WebStack extends Stack {
 
             // CloudTrail for the origin bucket
             if (cloudTrailEnabled) {
-                RetentionDays cloudTrailLogGroupRetentionPeriod = RetentionDays.valueOf(String.valueOf(cloudTrailLogGroupRetentionPeriodDays));
+                RetentionDays cloudTrailLogGroupRetentionPeriod;
+                switch (cloudTrailLogGroupRetentionPeriodDays) {
+                    case 1:
+                        cloudTrailLogGroupRetentionPeriod = RetentionDays.ONE_DAY;
+                        break;
+                    case 3:
+                        cloudTrailLogGroupRetentionPeriod = RetentionDays.THREE_DAYS;
+                        break;
+                    case 5:
+                        cloudTrailLogGroupRetentionPeriod = RetentionDays.FIVE_DAYS;
+                        break;
+                    case 7:
+                        cloudTrailLogGroupRetentionPeriod = RetentionDays.ONE_WEEK;
+                        break;
+                    case 14:
+                        cloudTrailLogGroupRetentionPeriod = RetentionDays.TWO_WEEKS;
+                        break;
+                    case 30:
+                        cloudTrailLogGroupRetentionPeriod = RetentionDays.ONE_MONTH;
+                        break;
+                    case 60:
+                        cloudTrailLogGroupRetentionPeriod = RetentionDays.TWO_MONTHS;
+                        break;
+                    case 90:
+                        cloudTrailLogGroupRetentionPeriod = RetentionDays.THREE_MONTHS;
+                        break;
+                    case 120:
+                        cloudTrailLogGroupRetentionPeriod = RetentionDays.FOUR_MONTHS;
+                        break;
+                    case 150:
+                        cloudTrailLogGroupRetentionPeriod = RetentionDays.FIVE_MONTHS;
+                        break;
+                    case 180:
+                        cloudTrailLogGroupRetentionPeriod = RetentionDays.SIX_MONTHS;
+                        break;
+                    case 365:
+                        cloudTrailLogGroupRetentionPeriod = RetentionDays.ONE_YEAR;
+                        break;
+                    case 400:
+                        cloudTrailLogGroupRetentionPeriod = RetentionDays.THIRTEEN_MONTHS;
+                        break;
+                    case 545:
+                        cloudTrailLogGroupRetentionPeriod = RetentionDays.EIGHTEEN_MONTHS;
+                        break;
+                    case 731:
+                        cloudTrailLogGroupRetentionPeriod = RetentionDays.TWO_YEARS;
+                        break;
+                    case 1827:
+                        cloudTrailLogGroupRetentionPeriod = RetentionDays.FIVE_YEARS;
+                        break;
+                    case 3653:
+                        cloudTrailLogGroupRetentionPeriod = RetentionDays.TEN_YEARS;
+                        break;
+                    case 0:
+                        cloudTrailLogGroupRetentionPeriod = RetentionDays.INFINITE;
+                        break;
+                    default:
+                        // Default to ONE_WEEK if an unsupported value is provided
+                        cloudTrailLogGroupRetentionPeriod = RetentionDays.ONE_WEEK;
+                        break;
+                }
                 LogGroup originBucketLogGroup = LogGroup.Builder.create(this, "OriginBucketLogGroup")
                         .logGroupName("%s%s".formatted(cloudTrailLogGroupPrefix, this.originBucket.getBucketName()))
                         .retention(cloudTrailLogGroupRetentionPeriod)

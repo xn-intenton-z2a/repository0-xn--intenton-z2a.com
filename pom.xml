@@ -81,6 +81,11 @@
                 <artifactId>log4j-api</artifactId>
                 <version>2.24.3</version>
             </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>5.3.1</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -122,7 +127,7 @@
             <artifactId>log4j-api</artifactId>
         </dependency>
 
-        <!-- JUnit 5 for testing -->
+        <!-- JUnit 5 for testing with Mockito -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
@@ -136,6 +141,11 @@
         <dependency>
             <groupId>uk.org.webcompere</groupId>
             <artifactId>system-stubs-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

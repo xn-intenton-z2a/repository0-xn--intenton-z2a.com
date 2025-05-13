@@ -20,7 +20,7 @@ public class WebStackTest {
                 .cloudTrailEnabled(true)
                 .cloudTrailLogGroupPrefix("/aws/s3/")
                 .cloudTrailLogGroupRetentionPeriodDays(3)
-                .accessLogGroupRetentionPeriodDays(28)
+                .accessLogGroupRetentionPeriodDays(30)
                 .s3UseExistingBucket(false)
                 .s3RetainBucket(false)
                 .cloudTrailEventSelectorPrefix("none")
