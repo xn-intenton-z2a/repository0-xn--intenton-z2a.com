@@ -7,6 +7,8 @@ public class WebApp {
     public static void main(final String[] args) {
         App app = new App();
 
+        String cloudTrailLogGroupRetentionPeriodDays = System.getenv("CLOUD_TRAIL_LOG_GROUP_RETENTION_PERIOD_DAYS") == null ? "0" : System.getenv("CLOUD_TRAIL_LOG_GROUP_RETENTION_PERIOD_DAYS");
+        String accessLogGroupRetentionPeriodDays = System.getenv("ACCESS_LOG_GROUP_RETENTION_PERIOD_DAYS") == null ? "0" : System.getenv("ACCESS_LOG_GROUP_RETENTION_PERIOD_DAYS");
         WebStack stack = WebStack.Builder.create(app, "WebStack")
                 .env(System.getenv("ENV_NAME"))
                 .hostedZoneName(System.getenv("HOSTED_ZONE_NAME"))
@@ -16,10 +18,10 @@ public class WebApp {
                 .useExistingCertificate(Boolean.parseBoolean(System.getenv("USE_EXISTING_CERTIFICATE")))
                 .cloudTrailEnabled(Boolean.parseBoolean(System.getenv("CLOUD_TRAIL_ENABLED")))
                 .cloudTrailLogGroupPrefix(System.getenv("CLOUD_TRAIL_LOG_GROUP_PREFIX"))
-                .cloudTrailLogGroupRetentionPeriodDays(Integer.parseInt(System.getenv("CLOUD_TRAIL_LOG_GROUP_RETENTION_PERIOD_DAYS")))
-                .accessLogGroupRetentionPeriodDays(Integer.parseInt(System.getenv("ACCESS_LOG_GROUP_RETENTION_PERIOD_DAYS")))
+                .cloudTrailLogGroupRetentionPeriodDays(Integer.parseInt(cloudTrailLogGroupRetentionPeriodDays))
+                .accessLogGroupRetentionPeriodDays(Integer.parseInt(accessLogGroupRetentionPeriodDays))
                 .s3UseExistingBucket(Boolean.parseBoolean(System.getenv("USE_EXISTING_BUCKET")))
-                .s3RetainBucket(Boolean.parseBoolean(System.getenv("RETAIN_BUCKET"))) // TODO: Switch to removal policy
+                .s3RetainBucket(Boolean.parseBoolean(System.getenv("RETAIN_BUCKET")))
                 .cloudTrailEventSelectorPrefix(System.getenv("OBJECT_PREFIX"))
                 .logS3ObjectEventHandlerSource(System.getenv("LOG_S3_OBJECT_EVENT_HANDLER_SOURCE"))
                 .logGzippedS3ObjectEventHandlerSource(System.getenv("LOG_GZIPPED_S3_OBJECT_EVENT_HANDLER_SOURCE"))
