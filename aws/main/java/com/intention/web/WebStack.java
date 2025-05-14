@@ -65,6 +65,7 @@ public class WebStack extends Stack {
     public String distributionUrl;
     public ARecord aRecord;
     public AaaaRecord aaaaRecord;
+    public Trail originBucketTrail;
 
     public static class Builder {
         public Construct scope;
@@ -88,8 +89,8 @@ public class WebStack extends Stack {
         public String logS3ObjectEventHandlerSource;
         public String logGzippedS3ObjectEventHandlerSource;
         public String docRootPath;
-        public String error404HtmlOrigin;
-        public String error404HtmlDistribution;
+        public String defaultDocumentAtOrigin;
+        public String error404NotFoundAtDistribution;
 
         public Builder(Construct scope, String id, StackProps props) {
             this.scope = scope;
@@ -192,13 +193,13 @@ public class WebStack extends Stack {
             return this;
         }
 
-        public Builder error404HtmlOrigin(String error404HtmlOrigin) {
-            this.error404HtmlOrigin = error404HtmlOrigin;
+        public Builder defaultDocumentAtOrigin(String defaultDocumentAtOrigin) {
+            this.defaultDocumentAtOrigin = defaultDocumentAtOrigin;
             return this;
         }
 
-        public Builder error404HtmlDistribution(String error404HtmlDistribution) {
-            this.error404HtmlDistribution = error404HtmlDistribution;
+        public Builder error404NotFoundAtDistribution(String error404NotFoundAtDistribution) {
+            this.error404NotFoundAtDistribution = error404NotFoundAtDistribution;
             return this;
         }
 
@@ -214,7 +215,8 @@ public class WebStack extends Stack {
             new AbstractMap.SimpleEntry<>(Pattern.compile("xn--intenton-z2a"), "intention")
     );
 
-    private String buildDomainName(String env, String subDomainName, String hostedZoneName) { return "%s.%s.%s".formatted(env, subDomainName, hostedZoneName); }
+    private String buildDomainName(String env, String subDomainName, String hostedZoneName) { return env.equals("prod") ? hostedZoneName : this.buildNonProdDomainName(env, subDomainName, hostedZoneName); }
+    private String buildNonProdDomainName(String env, String subDomainName, String hostedZoneName) { return "%s.%s.%s".formatted(env, subDomainName, hostedZoneName); }
     private String buildDashedDomainName(String domainName) { return ResourceNameUtils.convertDashSeparatedToDotSeparated(domainName, domainNameMappings); }
     private String buildOriginBucketName(String dashedDomainName){ return dashedDomainName; }
     private String buildCloudTrailLogBucketName(String dashedDomainName) { return "%s-cloud-trail".formatted(dashedDomainName); }
@@ -252,8 +254,8 @@ public class WebStack extends Stack {
         String distributionAccessLogBucketName = this.buildDistributionAccessLogBucketName(dashedDomainName);
         String logGzippedS3ObjectEventHandlerSource = this.getConfigValue(builder.logGzippedS3ObjectEventHandlerSource, "logGzippedS3ObjectEventHandlerSource");
         String docRootPath = this.getConfigValue(builder.docRootPath, "docRootPath");
-        String error404HtmlOrigin = this.getConfigValue(builder.error404HtmlOrigin, "error404HtmlOrigin");
-        String error404HtmlDistribution = this.getConfigValue(builder.error404HtmlDistribution, "error404HtmlDistribution");
+        String defaultDocumentAtOrigin = this.getConfigValue(builder.defaultDocumentAtOrigin, "defaultDocumentAtOrigin");
+        String error404NotFoundAtDistribution = this.getConfigValue(builder.error404NotFoundAtDistribution, "error404NotFoundAtDistribution");
 
         if (s3UseExistingBucket) {
             this.originBucket = Bucket.fromBucketName(this, "OriginBucket", originBucketName);
@@ -262,7 +264,7 @@ public class WebStack extends Stack {
             this.originAccessLogBucket = LogForwardingBucket.Builder
                     .create(this, "OriginAccess", logS3ObjectEventHandlerSource, LogS3ObjectEvent.class)
                     .bucketName(originAccessLogBucketName)
-                    .functionNamePrefix("origin-access-")
+                    .functionNamePrefix("%s-origin-access-".formatted(dashedDomainName))
                     .retentionPeriodDays(accessLogGroupRetentionPeriodDays)
                     .build();
             this.originBucket = Bucket.Builder.create(this, "OriginBucket")
@@ -274,101 +276,43 @@ public class WebStack extends Stack {
                     .autoDeleteObjects(!s3RetainBucket)
                     .serverAccessLogsBucket(this.originAccessLogBucket)
                     .build();
-
-            // CloudTrail for the origin bucket
-            if (cloudTrailEnabled) {
-                RetentionDays cloudTrailLogGroupRetentionPeriod;
-                switch (cloudTrailLogGroupRetentionPeriodDays) {
-                    case 1:
-                        cloudTrailLogGroupRetentionPeriod = RetentionDays.ONE_DAY;
-                        break;
-                    case 3:
-                        cloudTrailLogGroupRetentionPeriod = RetentionDays.THREE_DAYS;
-                        break;
-                    case 5:
-                        cloudTrailLogGroupRetentionPeriod = RetentionDays.FIVE_DAYS;
-                        break;
-                    case 7:
-                        cloudTrailLogGroupRetentionPeriod = RetentionDays.ONE_WEEK;
-                        break;
-                    case 14:
-                        cloudTrailLogGroupRetentionPeriod = RetentionDays.TWO_WEEKS;
-                        break;
-                    case 30:
-                        cloudTrailLogGroupRetentionPeriod = RetentionDays.ONE_MONTH;
-                        break;
-                    case 60:
-                        cloudTrailLogGroupRetentionPeriod = RetentionDays.TWO_MONTHS;
-                        break;
-                    case 90:
-                        cloudTrailLogGroupRetentionPeriod = RetentionDays.THREE_MONTHS;
-                        break;
-                    case 120:
-                        cloudTrailLogGroupRetentionPeriod = RetentionDays.FOUR_MONTHS;
-                        break;
-                    case 150:
-                        cloudTrailLogGroupRetentionPeriod = RetentionDays.FIVE_MONTHS;
-                        break;
-                    case 180:
-                        cloudTrailLogGroupRetentionPeriod = RetentionDays.SIX_MONTHS;
-                        break;
-                    case 365:
-                        cloudTrailLogGroupRetentionPeriod = RetentionDays.ONE_YEAR;
-                        break;
-                    case 400:
-                        cloudTrailLogGroupRetentionPeriod = RetentionDays.THIRTEEN_MONTHS;
-                        break;
-                    case 545:
-                        cloudTrailLogGroupRetentionPeriod = RetentionDays.EIGHTEEN_MONTHS;
-                        break;
-                    case 731:
-                        cloudTrailLogGroupRetentionPeriod = RetentionDays.TWO_YEARS;
-                        break;
-                    case 1827:
-                        cloudTrailLogGroupRetentionPeriod = RetentionDays.FIVE_YEARS;
-                        break;
-                    case 3653:
-                        cloudTrailLogGroupRetentionPeriod = RetentionDays.TEN_YEARS;
-                        break;
-                    case 0:
-                        cloudTrailLogGroupRetentionPeriod = RetentionDays.INFINITE;
-                        break;
-                    default:
-                        // Default to ONE_WEEK if an unsupported value is provided
-                        cloudTrailLogGroupRetentionPeriod = RetentionDays.ONE_WEEK;
-                        break;
-                }
-                LogGroup originBucketLogGroup = LogGroup.Builder.create(this, "OriginBucketLogGroup")
-                        .logGroupName("%s%s".formatted(cloudTrailLogGroupPrefix, this.originBucket.getBucketName()))
-                        .retention(cloudTrailLogGroupRetentionPeriod)
-                        .removalPolicy(s3RetainBucket ? RemovalPolicy.RETAIN : RemovalPolicy.DESTROY)
-                        .build();
-                Trail originBucketTrail = Trail.Builder.create(this, "OriginBucketTrail")
-                        .trailName(cloudTrailLogBucketName)
-                        .cloudWatchLogGroup(originBucketLogGroup)
-                        .sendToCloudWatchLogs(true)
-                        .cloudWatchLogsRetention(cloudTrailLogGroupRetentionPeriod)
-                        .includeGlobalServiceEvents(false)
-                        .isMultiRegionTrail(false)
-                        .build();
-                // Add S3 event selector to the CloudTrail
-                if (cloudTrailEventSelectorPrefix == null || !cloudTrailEventSelectorPrefix.isBlank() || "none".equals(cloudTrailEventSelectorPrefix)) {
-                    originBucketTrail.addS3EventSelector(Arrays.asList(S3EventSelector.builder()
-                            .bucket(this.originBucket)
-                            .build()
-                    ));
-                } else {
-                    originBucketTrail.addS3EventSelector(Arrays.asList(S3EventSelector.builder()
-                            .bucket(this.originBucket)
-                            .objectPrefix(cloudTrailEventSelectorPrefix)
-                            .build()
-                    ));
-                }
-            } else {
-                logger.info("CloudTrail is not enabled for the origin bucket.");
-            }
         }
-        // Grant the log bucket permissions to write to the origin bucket
+
+        // Add cloud trail to the origin bucket if enabled
+        // CloudTrail for the origin bucket
+        if (cloudTrailEnabled) {
+            RetentionDays cloudTrailLogGroupRetentionPeriod = RetentionDaysConverter.daysToRetentionDays(cloudTrailLogGroupRetentionPeriodDays);
+            LogGroup originBucketLogGroup = LogGroup.Builder.create(this, "OriginBucketLogGroup")
+                    .logGroupName("%s%s-cloud-trail".formatted(cloudTrailLogGroupPrefix, this.originBucket.getBucketName()))
+                    .retention(cloudTrailLogGroupRetentionPeriod)
+                    .removalPolicy(s3RetainBucket ? RemovalPolicy.RETAIN : RemovalPolicy.DESTROY)
+                    .build();
+            this.originBucketTrail = Trail.Builder.create(this, "OriginBucketTrail")
+                    .trailName(cloudTrailLogBucketName)
+                    .cloudWatchLogGroup(originBucketLogGroup)
+                    .sendToCloudWatchLogs(true)
+                    .cloudWatchLogsRetention(cloudTrailLogGroupRetentionPeriod)
+                    .includeGlobalServiceEvents(false)
+                    .isMultiRegionTrail(false)
+                    .build();
+            // Add S3 event selector to the CloudTrail
+            if (cloudTrailEventSelectorPrefix == null || !cloudTrailEventSelectorPrefix.isBlank() || "none".equals(cloudTrailEventSelectorPrefix)) {
+                originBucketTrail.addS3EventSelector(Arrays.asList(S3EventSelector.builder()
+                        .bucket(this.originBucket)
+                        .build()
+                ));
+            } else {
+                originBucketTrail.addS3EventSelector(Arrays.asList(S3EventSelector.builder()
+                        .bucket(this.originBucket)
+                        .objectPrefix(cloudTrailEventSelectorPrefix)
+                        .build()
+                ));
+            }
+        } else {
+            logger.info("CloudTrail is not enabled for the origin bucket.");
+        }
+
+        // Grant the read access to an origin identity
         final OriginAccessIdentity originIdentity = OriginAccessIdentity.Builder
                 .create(this, "OriginAccessIdentity")
                 .comment("Identity created for access to the web website bucket via the CloudFront distribution")
@@ -383,6 +327,7 @@ public class WebStack extends Stack {
                 .sources(List.of(Source.asset(docRootPath)))
                 .destinationBucket(this.originBucket)
                 .build();
+
         logger.info("Deployed files: from %s".formatted(docRootPath));
 
         // Create a certificate for the website domain
@@ -416,7 +361,7 @@ public class WebStack extends Stack {
         this.distributionAccessLogBucket = LogForwardingBucket.Builder
                 .create(this, "DistributionAccess", logGzippedS3ObjectEventHandlerSource, LogGzippedS3ObjectEvent.class)
                 .bucketName(distributionAccessLogBucketName)
-                .functionNamePrefix("distribution-access-")
+                .functionNamePrefix("%s-distribution-access-".formatted(dashedDomainName))
                 .retentionPeriodDays(accessLogGroupRetentionPeriodDays)
                 .build();
         final OriginRequestPolicy originRequestPolicy = OriginRequestPolicy.Builder
@@ -437,11 +382,11 @@ public class WebStack extends Stack {
                 .create(this, "Distribution")
                 .domainNames(Collections.singletonList(this.domainName))
                 .defaultBehavior(defaultBehaviour)
-                .defaultRootObject(error404HtmlOrigin)
+                .defaultRootObject(defaultDocumentAtOrigin)
                 .errorResponses(List.of(ErrorResponse.builder()
                         .httpStatus(HttpStatus.SC_NOT_FOUND)
                         .responseHttpStatus(HttpStatus.SC_NOT_FOUND)
-                        .responsePagePath("/%s".formatted(error404HtmlDistribution))
+                        .responsePagePath("/%s".formatted(error404NotFoundAtDistribution))
                         .build()))
                 .certificate(this.certificate)
                 .enableIpv6(true)

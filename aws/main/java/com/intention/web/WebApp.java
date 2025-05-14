@@ -25,8 +25,8 @@ public class WebApp {
                 .logS3ObjectEventHandlerSource(System.getenv("LOG_S3_OBJECT_EVENT_HANDLER_SOURCE"))
                 .logGzippedS3ObjectEventHandlerSource(System.getenv("LOG_GZIPPED_S3_OBJECT_EVENT_HANDLER_SOURCE"))
                 .docRootPath(System.getenv("DOC_ROOT_PATH"))
-                .error404HtmlOrigin(System.getenv("DEFAULT_HTML_DOCUMENT"))
-                .error404HtmlDistribution(System.getenv("ERROR_HTML_DOCUMENT"))
+                .defaultDocumentAtOrigin(System.getenv("DEFAULT_HTML_DOCUMENT"))
+                .error404NotFoundAtDistribution(System.getenv("ERROR_HTML_DOCUMENT"))
                 .build();
 
         CfnOutput.Builder.create(stack, "OriginBucketArn")

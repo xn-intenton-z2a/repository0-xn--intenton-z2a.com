@@ -25,12 +25,18 @@ import static org.mockito.Mockito.when;
 @ExtendWith(SystemStubsExtension.class)
 public class S3ClientTest {
 
+    private static final String testAccount = "111111111111";
     private final String bucketName = "test-bucket";
     private final String objectKey = "test-key";
 
     @SystemStub
     private EnvironmentVariables environmentVariables =
             new EnvironmentVariables(
+                    //"JSII_SILENCE_WARNING_UNTESTED_NODE_VERSION", "true",
+                    //"JSII_SILENCE_WARNING_DEPRECATED_NODE_VERSION", "true",
+                    "TARGET_ENV", "test",
+                    "CDK_DEFAULT_ACCOUNT", testAccount,
+                    "CDK_DEFAULT_REGION", "eu-west-2"
             );
 
     private final GetObjectRequest objectRequest = new MockableBuilder().getObjectRequest(bucketName, objectKey);

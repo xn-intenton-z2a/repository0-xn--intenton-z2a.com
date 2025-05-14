@@ -1,8 +1,8 @@
-# intentïon
+# intentïon.com (repository0-xn-intenton-z2a.com)
 
-intentïon: The feedback loop of innovation
-
-Test change.
+The consumer front end of intentïon.com 
+featuring [repository0](https://github.com/xn-intenton-z2a/repository0) 
+and the [agentic-lib](https://github.com/xn-intenton-z2a/agentic-lib).
 
 `xn--intenton-z2a.com` is a project by Polycode Limited which presents the intentïon home page: https://xn--intenton-z2a.com/
 
@@ -129,135 +129,337 @@ intentïon. Pronunciation: /ɪnˈtɛnʃən/. The diaeresis? It's a style thing (
 - **heuristic**: A *heuristic* can apply the *intentïon* to select a *parameter set* from the *search space*.
 - **enhancement**: An *enhancement* is the *heuristic* applied to previous request & responses and the *intentïon*.
 
-# Getting Started
+# Deployment
 
-# Infrastructure setup
+## Local Development Environment
 
-A user with full IAM access to create a role will be needed to execute the Terraform scripts which in turn to create
-the infrastructure level resources such as:
-* The IAM role for the infrastructure user
+### Clone the Repository
 
-Software required:
-* [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html)
-* [jq](https://stedolan.github.io/jq/download/)
-* [Terraform](https://www.terraform.io/downloads.html)
-* Terragrunt
-* AWS CDK
-
-Terragrunt:
-```shell
- % brew install terragrunt
-```
-
-Install the AWS CDK and ensure that version 2 is installed:
-````bash
- % npm install -g aws-cdk
- % cdk --version
-2.140.0 (build 46168aa)
-````
-
-Create the IAM role for the infrastructure user:
-```shell
- % export AWS_ACCOUNT_ID='541134664601'
- % export AWS_ACCESS_KEY_ID='...redacted...'
- % export AWS_SECRET_ACCESS_KEY='...redacted...'
- % aws sts get-caller-identity                                            
-{
-    "UserId": "AIDAI5QAEKWGGXBYLAZ5G",
-    "Account": "541134664601",
-    "Arn": "arn:aws:iam::541134664601:user/polycode-deploy"
-}
- % ./scripts/aws-create-infrastructure-role.sh
-```
-
-Add GitHub as an identity provider:
-To be able to authenticate with OIDC from GitHub you will first need to set up GitHub as a federated identity provider in your AWS account.
-1. To do that, navigate to the AWS IAM console and click on Identity Providers on the left-hand side.
-2. Then, click on the Add provider button.
-3. For Provider type, select OpenID Connect.
-4. For Provider URL, enter https://token.actions.githubusercontent.com
-5. Click on Get thumbprint to get the thumbprint of the provider
-6. For Audience, enter `sts.amazonaws.com`
-   See:
-   ![setup-add-identity-provider](docs/setup-add-identity-provider.png)
-
-## First deployment
-
-Bootstrap the stack with a state bucket
 ```bash
- % source ./scripts/aws-reset-assumed-role.sh
-{
-    "UserId": "AIDAX37RDWOMUJDFBDE6Y",
-    "Account": "541134664601",
-    "Arn": "arn:aws:iam::541134664601:user/polycode-default-account"
-}
- % source ./scripts/aws-assume-deployment-role.sh
-{
-    "UserId": "AROA45MW5HDLRUMTIBS4I:WorkstationSession-for-antony",
-    "Account": "887764105431",
-    "Arn": "arn:aws:sts::887764105431:assumed-role/intention-com-web-deployment-role/WorkstationSession-for-antony"
-}
- % TODO...
-````
 
-The commit and push and the following jobs should run:
-* `infrastructure-apply.yml` - Create infrastructure
-* `dev-build-deploy.yml` - Build and deploy dev
-
-The development side shall now be available at:
-
-TODO website: http://test.com
-
-## Manual infrastructure tear-down
-
-Run the following in sequence:
-```shell
- % source ./scripts/aws-assume-infrastructure-role.sh
- % terragrunt run-all destroy -auto-approve --terragrunt-non-interactive --terragrunt-working-dir ./infrastructure
- % ./scripts/aws-delete-infrastructure-role.sh
+git clone https://github.com/your-username/repository0-xn-intenton-z2a.com.git
+cd repository0-xn-intenton-z2a.com
 ```
 
-# Handy scripts
+### Install Node.js dependencies and test
 
-Cat the workflow and source files to datestamp the files in the export directory.
-```shell
-./export-source.sh
+```bash
+
+npm install
+npm test
 ```
 
-## Local access to AWS
+### Build and test the Java Application
 
-You can assume the infrastructure role locally and use Terragrunt to create the infrastructure level resources by running:
-```shell
- % source ./scripts/aws-reset-assumed-role.sh
-{
-    "UserId": "AIDAX37RDWOMUJDFBDE6Y",
-    "Account": "541134664601",
-    "Arn": "arn:aws:iam::541134664601:user/polycode-default-account"
-}
- % source ./scripts/aws-assume-infrastructure-role.sh
- {
-    "UserId": "AROA45MW5HDLQ2F53F3V4:WorkstationSession-for-antony",
-    "Account": "541134664601",
-    "Arn": "arn:aws:sts::541134664601:assumed-role/intention-com-web-infrastructure-role/WorkstationSession-for-antony"
-}
- % terragrunt apply -auto-approve --terragrunt-non-interactive --terragrunt-working-dir ./infrastructure
+```bash
+./mvnw clean package
 ```
 
-You can assume the deployment role locally by running:
-```shell
- % source ./scripts/aws-reset-assumed-role.sh
+### Synthesis the CDK
+
+```bash
+npx cdk synth
+```
+
+### Run the website locally
+
+```bash
+http-server public/ --port 3000
+```
+
+Webserver output:
+```log
+Starting up http-server, serving public/
+
+http-server version: 14.1.1
+
+http-server settings: 
+CORS: disabled
+Cache: 3600 seconds
+Connection Timeout: 120 seconds
+Directory Listings: visible
+AutoIndex: visible
+Serve GZIP Files: false
+Serve Brotli Files: false
+Default File Extension: none
+
+Available on:
+  http://127.0.0.1:3000
+  http://192.168.1.121:3000
+  http://10.14.0.2:3000
+  http://169.254.59.96:3000
+Hit CTRL-C to stop the server
+```
+
+Access via http://127.0.0.1:3000 or install [ngrok](https://ngrok.com/) and get a SSL terminated public URL:
+```bash
+ngrok http 3000
+```
+
+ngrok runs:
+```log
+ngrok                                                                                                                                                                                                          (Ctrl+C to quit)
+                                                                                                                                                                                                                               
+🤖 Want to hang with ngrokkers on our new Discord? http://ngrok.com/discord                                                                                                                                                    
+                                                                                                                                                                                                                               
+Session Status                online                                                                                                                                                                                           
+Account                       Antony @ Polycode (Plan: Free)                                                                                                                                                                   
+Version                       3.22.1                                                                                                                                                                                           
+Region                        Europe (eu)                                                                                                                                                                                      
+Web Interface                 http://127.0.0.1:4040                                                                                                                                                                            
+Forwarding                    https://d57b-146-70-103-222.ngrok-free.app -> http://localhost:3000                                                                                                                              
+                                                                                                                                                                                                                               
+Connections                   ttl     opn     rt1     rt5     p50     p90                                                                                                                                                      
+                              0       0       0.00    0.00    0.00    0.00                  
+```
+
+Here you can open https://d57b-146-70-103-222.ngrok-free.app in a browser of your choice (you'll have your own URL
+unless I am still running this one, I don't know when the id's roll so I might.)
+
+## Setup for AWS CDK
+
+You'll need to have run `cdk bootstrap` to set up the environment for the CDK. This is a one-time setup per AWS account and region.
+General administrative permissions are required to run this command. (NPM installed the CDK.)
+
+In this example for user `antony-local-user` and `agentic-lib-github-actions-role` we would add the following
+trust policy so that they can assume the role: `agentic-lib-deployment-role`:
+```json
 {
-    "UserId": "AIDAX37RDWOMUJDFBDE6Y",
-    "Account": "541134664601",
-    "Arn": "arn:aws:iam::541134664601:user/polycode-default-account"
+	"Version": "2012-10-17",
+	"Statement": [
+		{
+			"Sid": "Statement1",
+			"Effect": "Allow",
+			"Action": ["sts:AssumeRole", "sts:TagSession"],
+			"Resource": ["arn:aws:iam::541134664601:role/agentic-lib-deployment-role"]
+		}
+	]
 }
- % source ./scripts/aws-assume-deployment-role.sh
+```
+
+The `agentic-lib-github-actions-role` also needs the following trust entity to allow GitHub Actions to assume the role:
+```json
 {
-    "UserId": "AROA45MW5HDLRUMTIBS4I:WorkstationSession-for-antony",
-    "Account": "887764105431",
-    "Arn": "arn:aws:sts::887764105431:assumed-role/intention-com-web-deployment-role/WorkstationSession-for-antony"
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Principal": {
+                "Federated": "arn:aws:iam::541134664601:oidc-provider/token.actions.githubusercontent.com"
+            },
+            "Action": "sts:AssumeRoleWithWebIdentity",
+            "Condition": {
+                "StringEquals": {
+                    "token.actions.githubusercontent.com:aud": "sts.amazonaws.com"
+                },
+                "StringLike": {
+                    "token.actions.githubusercontent.com:sub": "repo:xn-intenton-z2a/s3-sqs-bridge:*"
+                }
+            }
+        }
+    ]
 }
- %
+```
+
+Create the IAM role with the necessary permissions to assume role from your authenticated user:
+```bash
+
+cat <<'EOF' > agentic-lib-deployment-trust-policy.json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": [
+          "arn:aws:iam::541134664601:user/antony-local-user",
+          "arn:aws:iam::541134664601:role/agentic-lib-github-actions-role"
+        ]
+      },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}
+EOF
+aws iam create-role \
+  --role-name agentic-lib-deployment-role \
+  --assume-role-policy-document file://agentic-lib-deployment-trust-policy.json
+```
+
+Add the necessary permissions to deploy `repository0-xn-intenton-z2a.com`:
+```bash
+
+cat <<'EOF' > agentic-lib-deployment-permissions-policy.json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "cloudformation:*",
+        "iam:*",
+        "s3:*",
+        "cloudtrail:*",
+        "logs:*",
+        "events:*",
+        "lambda:*",
+        "dynamodb:*",
+        "sqs:*",
+        "sts:AssumeRole"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+EOF
+aws iam put-role-policy \
+  --role-name agentic-lib-deployment-role \
+  --policy-name agentic-lib-deployment-permissions-policy \
+  --policy-document file://agentic-lib-deployment-permissions-policy.json
+```
+
+Assume the deployment role:
+```bash
+
+ROLE_ARN="arn:aws:iam::541134664601:role/agentic-lib-deployment-role"
+SESSION_NAME="agentic-lib-deployment-session-local"
+ASSUME_ROLE_OUTPUT=$(aws sts assume-role --role-arn "$ROLE_ARN" --role-session-name "$SESSION_NAME" --output json)
+if [ $? -ne 0 ]; then
+  echo "Error: Failed to assume role."
+  exit 1
+fi
+export AWS_ACCESS_KEY_ID=$(echo "$ASSUME_ROLE_OUTPUT" | jq -r '.Credentials.AccessKeyId')
+export AWS_SECRET_ACCESS_KEY=$(echo "$ASSUME_ROLE_OUTPUT" | jq -r '.Credentials.SecretAccessKey')
+export AWS_SESSION_TOKEN=$(echo "$ASSUME_ROLE_OUTPUT" | jq -r '.Credentials.SessionToken')
+EXPIRATION=$(echo "$ASSUME_ROLE_OUTPUT" | jq -r '.Credentials.Expiration')
+echo "Assumed role successfully. Credentials valid until: $EXPIRATION"
+```
+Output:
+```log
+Assumed role successfully. Credentials valid until: 2025-03-25T02:27:18+00:00
+```
+
+Check the session:
+```bash
+
+aws sts get-caller-identity
+```
+
+Output:
+```json
+{
+  "UserId": "AROAX37RDWOM7ZHORNHKD:agentic-lib-deployment-session",
+  "Account": "541134664601",
+  "Arn": "arn:aws:sts::541134664601:assumed-role/agentic-lib-deployment-role/agentic-lib-deployment-session"
+}
+```
+
+Check the permissions of the role:
+```bash
+
+aws iam list-role-policies \
+  --role-name agentic-lib-deployment-role
+```
+Output (the policy we created above):
+```json
+{
+  "PolicyNames": [
+    "agentic-lib-deployment-permissions-policy"
+  ]
+}
+```
+
+An example of the GitHub Actions role being assumed in a GitHub Actions Workflow:
+```yaml
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::541134664601:role/agentic-lib-deployment-role
+          aws-region: eu-west-2
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+      - run: npm install -g aws-cdk
+      - run: aws s3 ls --region eu-west-2
+```
+
+## Deployment to AWS
+
+See also:
+* local running using [Localstack](LOCALSTACK.md).
+* Debugging notes for the AWS deployment here [DEBUGGING](DEBUGGING.md).
+
+Package the CDK, deploy the CDK stack which rebuilds the Docker image, and deploy the AWS infrastructure:
+```bash
+
+./mvnw clean package
+```
+
+Maven build output:
+```log
+...truncated...
+[INFO] Replacing original artifact with shaded artifact.
+[INFO] Replacing /Users/antony/projects/repository0-xn--intenton-z2a.com/target/web-1.1.0.jar with /Users/antony/projects/repository0-xn--intenton-z2a.com/target/web-1.1.0-shaded.jar
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  15.522 s
+[INFO] Finished at: 2025-05-14T03:16:19+02:00
+[INFO] ------------------------------------------------------------------------
+```
+
+Deploys the AWS infrastructure including an App Runner service, an SQS queue, Lambda functions, and a PostgresSQL table.
+```bash
+
+npx cdk deploy
+```
+
+Example output:
+```log
+...truncated...
+S3SqsBridgeStack: success: Published f23b4641b15bfe521c575e572ebe41ca2c4613e3e1ea8a9c8ef816c73832cddf:current_account-current_region
+S3SqsBridgeStack: deploying... [1/1]
+S3SqsBridgeStack: creating CloudFormation changeset...
+
+ ✅  S3SqsBridgeStack
+
+✨  Deployment time: 105.48s
+
+Outputs:
+S3SqsBridgeStack.BucketArn = arn:aws:s3:::s3-sqs-bridge-bucket
+S3SqsBridgeStack.OffsetsTableArn = arn:aws:dynamodb:eu-west-2:541134664601:table/offsets
+S3SqsBridgeStack.OneOffJobLambdaArn = arn:aws:lambda:eu-west-2:541134664601:function:replayBatchLambdaHandler
+S3SqsBridgeStack.ReplayQueueUrl = https://sqs.eu-west-2.amazonaws.com/541134664601/s3-sqs-bridge-replay-queue
+...truncated...
+S3SqsBridgeStack.s3BucketName = s3-sqs-bridge-bucket (Source: CDK context.)
+S3SqsBridgeStack.s3ObjectPrefix = events/ (Source: CDK context.)
+S3SqsBridgeStack.s3RetainBucket = false (Source: CDK context.)
+S3SqsBridgeStack.s3UseExistingBucket = false (Source: CDK context.)
+Stack ARN:
+arn:aws:cloudformation:eu-west-2:541134664601:stack/S3SqsBridgeStack/30cf37a0-0504-11f0-b142-06193d47b789
+
+✨  Total time: 118.12s
+
+```
+
+Destroy a previous stack and delete related log groups:
+```bash
+
+npx cdk destroy
+```
+
+(The commands go in separately because the CDK can be interactive.)
+```bash
+
+aws logs delete-log-group \
+  --log-group-name "/aws/s3/s3-sqs-bridge-bucket"
+aws logs delete-log-group \
+  --log-group-name "/aws/lambda/s3-sqs-bridge-replay-batch-function"
+aws logs delete-log-group \
+  --log-group-name "/aws/lambda/s3-sqs-bridge-replay-function"
+aws logs delete-log-group \
+  --log-group-name "/aws/lambda/s3-sqs-bridge-source-function"
 ```
 
 # Prompts
