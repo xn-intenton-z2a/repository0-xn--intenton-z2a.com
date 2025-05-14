@@ -208,6 +208,14 @@ public class WebStack extends Stack {
             return stack;
         }
 
+        public static String buildDomainName(String env, String subDomainName, String hostedZoneName) { return env.equals("prod") ? hostedZoneName : Builder.buildNonProdDomainName(env, subDomainName, hostedZoneName); }
+        public static String buildNonProdDomainName(String env, String subDomainName, String hostedZoneName) { return "%s.%s.%s".formatted(env, subDomainName, hostedZoneName); }
+        public static String buildDashedDomainName(String domainName) { return ResourceNameUtils.convertDashSeparatedToDotSeparated(domainName, domainNameMappings); }
+        public static String buildOriginBucketName(String dashedDomainName){ return dashedDomainName; }
+        public static String buildCloudTrailLogBucketName(String dashedDomainName) { return "%s-cloud-trail".formatted(dashedDomainName); }
+        public static String buildOriginAccessLogBucketName(String dashedDomainName) { return "%s-origin-access-logs".formatted(dashedDomainName); }
+        public static String buildDistributionAccessLogBucketName(String dashedDomainName) { return "%s-distribution-access-logs".formatted(dashedDomainName);}
+
     }
 
     // TODO: Move to cdk.json
@@ -215,13 +223,6 @@ public class WebStack extends Stack {
             new AbstractMap.SimpleEntry<>(Pattern.compile("xn--intenton-z2a"), "intention")
     );
 
-    private String buildDomainName(String env, String subDomainName, String hostedZoneName) { return env.equals("prod") ? hostedZoneName : this.buildNonProdDomainName(env, subDomainName, hostedZoneName); }
-    private String buildNonProdDomainName(String env, String subDomainName, String hostedZoneName) { return "%s.%s.%s".formatted(env, subDomainName, hostedZoneName); }
-    private String buildDashedDomainName(String domainName) { return ResourceNameUtils.convertDashSeparatedToDotSeparated(domainName, domainNameMappings); }
-    private String buildOriginBucketName(String dashedDomainName){ return dashedDomainName; }
-    private String buildCloudTrailLogBucketName(String dashedDomainName) { return "%s-cloud-trail".formatted(dashedDomainName); }
-    private String buildOriginAccessLogBucketName(String dashedDomainName) { return "%s-origin-access-logs".formatted(dashedDomainName); }
-    private String buildDistributionAccessLogBucketName(String dashedDomainName) { return "%s-distribution-access-logs".formatted(dashedDomainName);}
     public String buildCertificateArn(final String id) { return "arn:aws:acm:us-east-1:%s:certificate/%s".formatted(this.getAccount(), id);}
 
     public WebStack(Construct scope, String id, WebStack.Builder builder) {
@@ -242,16 +243,16 @@ public class WebStack extends Stack {
         String cloudTrailLogGroupPrefix = this.getConfigValue(builder.cloudTrailLogGroupPrefix, "cloudTrailLogGroupPrefix");
         int cloudTrailLogGroupRetentionPeriodDays = Integer.parseInt(this.getConfigValue(builder.cloudTrailLogGroupRetentionPeriodDays, "cloudTrailLogGroupRetentionPeriodDays"));
         int accessLogGroupRetentionPeriodDays = Integer.parseInt(this.getConfigValue(builder.accessLogGroupRetentionPeriodDays, "accessLogGroupRetentionPeriodDays"));
-        this.domainName = this.buildDomainName(env, subDomainName, hostedZoneName);
-        String dashedDomainName = this.buildDashedDomainName(this.domainName);
-        String originBucketName = this.buildOriginBucketName(dashedDomainName);
+        this.domainName = Builder.buildDomainName(env, subDomainName, hostedZoneName);
+        String dashedDomainName = Builder.buildDashedDomainName(this.domainName);
+        String originBucketName = Builder.buildOriginBucketName(dashedDomainName);
         boolean s3UseExistingBucket = Boolean.parseBoolean(this.getConfigValue(builder.s3UseExistingBucket, "s3UseExistingBucket"));
         boolean s3RetainBucket = Boolean.parseBoolean(this.getConfigValue(builder.s3RetainBucket, "s3RetainBucket"));
         String cloudTrailEventSelectorPrefix = this.getConfigValue(builder.cloudTrailEventSelectorPrefix, "cloudTrailEventSelectorPrefix");
-        String cloudTrailLogBucketName = this.buildCloudTrailLogBucketName(dashedDomainName);
-        String originAccessLogBucketName = this.buildOriginAccessLogBucketName(dashedDomainName);
+        String cloudTrailLogBucketName = Builder.buildCloudTrailLogBucketName(dashedDomainName);
+        String originAccessLogBucketName = Builder.buildOriginAccessLogBucketName(dashedDomainName);
         String logS3ObjectEventHandlerSource = this.getConfigValue(builder.logS3ObjectEventHandlerSource, "logS3ObjectEventHandlerSource");
-        String distributionAccessLogBucketName = this.buildDistributionAccessLogBucketName(dashedDomainName);
+        String distributionAccessLogBucketName = Builder.buildDistributionAccessLogBucketName(dashedDomainName);
         String logGzippedS3ObjectEventHandlerSource = this.getConfigValue(builder.logGzippedS3ObjectEventHandlerSource, "logGzippedS3ObjectEventHandlerSource");
         String docRootPath = this.getConfigValue(builder.docRootPath, "docRootPath");
         String defaultDocumentAtOrigin = this.getConfigValue(builder.defaultDocumentAtOrigin, "defaultDocumentAtOrigin");
@@ -273,6 +274,7 @@ public class WebStack extends Stack {
                     .blockPublicAccess(BlockPublicAccess.BLOCK_ALL)
                     .encryption(BucketEncryption.S3_MANAGED)
                     .removalPolicy(s3RetainBucket ? RemovalPolicy.RETAIN : RemovalPolicy.DESTROY)
+                    .autoDeleteObjects(true)
                     .autoDeleteObjects(!s3RetainBucket)
                     .serverAccessLogsBucket(this.originAccessLogBucket)
                     .build();

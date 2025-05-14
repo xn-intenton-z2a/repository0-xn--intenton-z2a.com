@@ -1,7 +1,7 @@
 {
   "app": "mvn exec:java -Dexec.mainClass=com.intention.web.WebApp",
-  "synthStacks": "npx cdk synth WebStack --ci true --strict --validation",
-  "deployStacks": "npx cdk deploy WebStack --require-approval never --ci true --verbose --strict --validation",
+  "synthStacks": "npx cdk synth WebStack-dev --ci true --strict --validation",
+  "deployStacks": "npx cdk deploy WebStack-dev --require-approval never --ci true --verbose --strict --validation",
   "context": {
     "env": "dev",
     "subDomainName": "web",

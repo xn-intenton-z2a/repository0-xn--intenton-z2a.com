@@ -7,7 +7,9 @@ public class WebApp {
     public static void main(final String[] args) {
         App app = new App();
 
-        WebStack stack = WebStack.Builder.create(app, "WebStack")
+        String envName = System.getenv("ENV_NAME");
+        String stackId = "WebStack-%s".formatted(envName != null && !envName.isBlank() ? envName : "dev");
+        WebStack stack = WebStack.Builder.create(app, stackId)
                 .env(System.getenv("ENV_NAME"))
                 .hostedZoneName(System.getenv("HOSTED_ZONE_NAME"))
                 .hostedZoneId(System.getenv("HOSTED_ZONE_ID"))
