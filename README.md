@@ -6,6 +6,16 @@ and the [agentic-lib](https://github.com/xn-intenton-z2a/agentic-lib).
 
 `xn--intenton-z2a.com` is a project by Polycode Limited which presents the intentïon home page: https://xn--intenton-z2a.com/
 
+# Repository variables
+
+| Variable                 | Description                              | Level        | Type   | Example                          |
+|--------------------------|------------------------------------------|--------------|--------|----------------------------------|
+| `CHATGPT_API_SECRET_KEY` | The OpenAI API key for the ChatGPT API.  | Repository   | Secret | `sk-01234-FAKE-012340000T3Bl...` |
+| `CHATGPT_API_MODEL`      | The OpenAI API model to use.             | Repository   | String | `o4-mini`                        |
+| `AWS_HOSTED_ZONE_ID`     | The AWS hosted zone ID for the domain.   | Repository   | String | `Z01234-FAKE-012340000`          |
+| `AWS_HOSTED_ZONE_NAME`   | The AWS hosted zone name for the domain. | Repository   | String | `my-fake-domaim.com`             |
+| `AWS_CERTIFICATE_ID`     | The AWS certificate ID for the domain.   | Environment  | String | `01234-FAKE-012340000`           |
+
 # Deployment
 
 ## Local Development Environment
@@ -401,6 +411,9 @@ Public brand:
 - [x] CI deployment
 - [~] Swap over to host live site from the CDK deployment by adding default environment 'ci' and the option of 'prod'.
 - [~] Automated activity generation from showcased projects
+- [ ] Change AWS_CERTIFICATE_ID to ARN
+- [ ] Change AWS_HOSTED_ZONE_ID to ARN (if possible to look up by ARN)
+- [ ] Read the primary domain from the AWS hosted zone (assuming we can look up by ARN)
 - [ ] Chat to interact with the projects
 - [ ] Showcase links
 - [ ] Automated feed generation
