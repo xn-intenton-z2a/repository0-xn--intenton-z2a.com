@@ -59,14 +59,17 @@ public class WebStack extends Stack {
 
     public String domainName;
     public IBucket originBucket;
+    public LogGroup originBucketLogGroup;
     public IBucket originAccessLogBucket;
     public S3Origin origin;
     public BucketDeployment deployment;
     public IHostedZone hostedZone;
     public ICertificate certificate;
     public IBucket distributionAccessLogBucket;
+    public OriginAccessIdentity originIdentity;
     public Distribution distribution;
     public String distributionUrl;
+    public ISource docRootSource;
     public ARecord aRecord;
     public AaaaRecord aaaaRecord;
     public Trail originBucketTrail;
@@ -286,16 +289,16 @@ public class WebStack extends Stack {
 
         // Add cloud trail to the origin bucket if enabled
         // CloudTrail for the origin bucket
+        RetentionDays cloudTrailLogGroupRetentionPeriod = RetentionDaysConverter.daysToRetentionDays(cloudTrailLogGroupRetentionPeriodDays);
         if (cloudTrailEnabled) {
-            RetentionDays cloudTrailLogGroupRetentionPeriod = RetentionDaysConverter.daysToRetentionDays(cloudTrailLogGroupRetentionPeriodDays);
-            LogGroup originBucketLogGroup = LogGroup.Builder.create(this, "OriginBucketLogGroup")
+            this.originBucketLogGroup = LogGroup.Builder.create(this, "OriginBucketLogGroup")
                     .logGroupName("%s%s-cloud-trail".formatted(cloudTrailLogGroupPrefix, this.originBucket.getBucketName()))
                     .retention(cloudTrailLogGroupRetentionPeriod)
                     .removalPolicy(s3RetainBucket ? RemovalPolicy.RETAIN : RemovalPolicy.DESTROY)
                     .build();
             this.originBucketTrail = Trail.Builder.create(this, "OriginBucketTrail")
                     .trailName(cloudTrailLogBucketName)
-                    .cloudWatchLogGroup(originBucketLogGroup)
+                    .cloudWatchLogGroup(this.originBucketLogGroup)
                     .sendToCloudWatchLogs(true)
                     .cloudWatchLogsRetention(cloudTrailLogGroupRetentionPeriod)
                     .includeGlobalServiceEvents(false)
@@ -319,13 +322,13 @@ public class WebStack extends Stack {
         }
 
         // Grant the read access to an origin identity
-        final OriginAccessIdentity originIdentity = OriginAccessIdentity.Builder
+        this.originIdentity = OriginAccessIdentity.Builder
                 .create(this, "OriginAccessIdentity")
                 .comment("Identity created for access to the web website bucket via the CloudFront distribution")
                 .build();
-        originBucket.grantRead(originIdentity); // This adds "s3:List*" so that 404s are handled.
+        originBucket.grantRead(this.originIdentity); // This adds "s3:List*" so that 404s are handled.
         this.origin = S3Origin.Builder.create(this.originBucket)
-                .originAccessIdentity(originIdentity)
+                .originAccessIdentity(this.originIdentity)
                 .build();
 
         // Create a certificate for the website domain
@@ -398,17 +401,17 @@ public class WebStack extends Stack {
         logger.info("Distribution URL: %s".formatted(distributionUrl));
 
         // Deploy the web website files to the web website bucket and invalidate distribution
-        ISource docRootSource = Source.asset(docRootPath, AssetOptions.builder()
+        this.docRootSource = Source.asset(docRootPath, AssetOptions.builder()
                 .assetHashType(AssetHashType.SOURCE)
                 .build());
         logger.info("Will deploy files from: %s".formatted(docRootPath));
         this.deployment = BucketDeployment.Builder.create(this, "DocRootToOriginDeployment")
-                .sources(List.of(docRootSource))
+                .sources(List.of(this.docRootSource))
                 .destinationBucket(this.originBucket)
                 .distribution(this.distribution)
                 .distributionPaths(List.of("/*"))
                 .retainOnDelete(false)
-                .logRetention(RetentionDays.THREE_DAYS)
+                .logRetention(cloudTrailLogGroupRetentionPeriod)
                 .expires(Expiration.after(Duration.minutes(5)))
                 .prune(true)
                 .build();
