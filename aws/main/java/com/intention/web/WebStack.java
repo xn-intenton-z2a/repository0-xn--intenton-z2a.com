@@ -6,6 +6,7 @@ import org.apache.logging.log4j.Logger;
 import software.amazon.awscdk.AssetHashType;
 import software.amazon.awscdk.CfnOutput;
 import software.amazon.awscdk.Duration;
+import software.amazon.awscdk.Expiration;
 import software.amazon.awscdk.RemovalPolicy;
 import software.amazon.awscdk.Stack;
 import software.amazon.awscdk.StackProps;
@@ -338,7 +339,7 @@ public class WebStack extends Stack {
                 .distributionPaths(List.of("/*"))
                 .retainOnDelete(false)
                 .logRetention(RetentionDays.THREE_DAYS)
-                .expiration(Duration.minutes(5))
+                .expires(Expiration.after(Duration.minutes(5)))
                 .prune(true)
                 .build();
 
