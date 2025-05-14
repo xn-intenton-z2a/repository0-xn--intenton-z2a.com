@@ -8,13 +8,14 @@ and the [agentic-lib](https://github.com/xn-intenton-z2a/agentic-lib).
 
 # Repository variables
 
-| Variable                 | Description                              | Level        | Type   | Example                          |
-|--------------------------|------------------------------------------|--------------|--------|----------------------------------|
-| `CHATGPT_API_SECRET_KEY` | The OpenAI API key for the ChatGPT API.  | Repository   | Secret | `sk-01234-FAKE-012340000T3Bl...` |
-| `CHATGPT_API_MODEL`      | The OpenAI API model to use.             | Repository   | String | `o4-mini`                        |
-| `AWS_HOSTED_ZONE_ID`     | The AWS hosted zone ID for the domain.   | Repository   | String | `Z01234-FAKE-012340000`          |
-| `AWS_HOSTED_ZONE_NAME`   | The AWS hosted zone name for the domain. | Repository   | String | `my-fake-domaim.com`             |
-| `AWS_CERTIFICATE_ID`     | The AWS certificate ID for the domain.   | Environment  | String | `01234-FAKE-012340000`           |
+| Variable                  | Description                              | Level        | Type     | Example                          |
+|---------------------------|------------------------------------------|--------------|----------|----------------------------------|
+| `CHATGPT_API_SECRET_KEY`  | The OpenAI API key for the ChatGPT API.  | Repository   | Secret   | `sk-01234-FAKE-012340000T3Bl...` |
+| `CHATGPT_API_MODEL`       | The OpenAI API model to use.             | Repository   | String   | `o4-mini`                        |
+| `AWS_HOSTED_ZONE_ID`      | The AWS hosted zone ID for the domain.   | Repository   | String   | `Z01234-FAKE-012340000`          |
+| `AWS_HOSTED_ZONE_NAME`    | The AWS hosted zone name for the domain. | Repository   | String   | `my-fake-domaim.com`             |
+| `AWS_CERTIFICATE_ID`      | The AWS certificate ID for the domain.   | Environment  | String   | `01234-FAKE-012340000`           |
+| `AWS_CLOUD_TRAIL_ENABLED` | Enable CloudTrail logging.               | Environment  | Boolean  | `true`                           |
 
 # Deployment
 

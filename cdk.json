@@ -10,7 +10,7 @@
     "useExistingHostedZone": "true",
     "certificateId": "73421403-bd8c-493c-888c-e3e08eec1c41",
     "useExistingCertificate": "true",
-    "cloudTrailEnabled": "true",
+    "cloudTrailEnabled": "false",
     "cloudTrailLogGroupPrefix": "/aws/s3/",
     "cloudTrailLogGroupRetentionPeriodDays": "3",
     "accessLogGroupRetentionPeriodDays": "30",
