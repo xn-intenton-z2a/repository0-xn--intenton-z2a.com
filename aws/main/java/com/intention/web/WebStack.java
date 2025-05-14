@@ -334,6 +334,12 @@ public class WebStack extends Stack {
         this.deployment = BucketDeployment.Builder.create(this, "DocRootToOriginDeployment")
                 .sources(List.of(docRootSource))
                 .destinationBucket(this.originBucket)
+                .distribution(this.distribution)
+                .distributionPaths(List.of("/*"))
+                .retainOnDelete(false)
+                .logRetention(RetentionDays.THREE_DAYS)
+                .expiration(Duration.minutes(5))
+                .prune(true)
                 .build();
 
         logger.info("Deployed files: from %s".formatted(docRootPath));
