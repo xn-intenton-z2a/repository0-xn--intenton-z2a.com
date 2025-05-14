@@ -3,6 +3,7 @@ package com.intention.web;
 import org.apache.hc.core5.http.HttpStatus;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import software.amazon.awscdk.AssetHashType;
 import software.amazon.awscdk.CfnOutput;
 import software.amazon.awscdk.Duration;
 import software.amazon.awscdk.RemovalPolicy;
@@ -39,7 +40,9 @@ import software.amazon.awscdk.services.s3.BlockPublicAccess;
 import software.amazon.awscdk.services.s3.Bucket;
 import software.amazon.awscdk.services.s3.BucketEncryption;
 import software.amazon.awscdk.services.s3.IBucket;
+import software.amazon.awscdk.services.s3.assets.AssetOptions;
 import software.amazon.awscdk.services.s3.deployment.BucketDeployment;
+import software.amazon.awscdk.services.s3.deployment.ISource;
 import software.amazon.awscdk.services.s3.deployment.Source;
 import software.constructs.Construct;
 
@@ -325,8 +328,11 @@ public class WebStack extends Stack {
                 .build();
 
         // Deploy the web website files to the web website bucket
+        ISource docRootSource = Source.asset(docRootPath, AssetOptions.builder()
+                .assetHashType(AssetHashType.SOURCE)
+                .build());
         this.deployment = BucketDeployment.Builder.create(this, "DocRootToOriginDeployment")
-                .sources(List.of(Source.asset(docRootPath)))
+                .sources(List.of(docRootSource))
                 .destinationBucket(this.originBucket)
                 .build();
 
