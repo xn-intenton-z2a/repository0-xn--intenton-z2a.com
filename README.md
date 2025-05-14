@@ -12,10 +12,11 @@ Public brand:
 - [x] Website for intentïon.com text light, light grey or misty: https://xn--intenton-z2a.com/
 - [x] Logo selection
 - [x] Sign up for LinkTree
-- [ ] Swap to use repository0 template.
+- [x] CDK deploy
+- [x] Swap to use repository0 template.
 - [~] CI deployment
-- [~] CDK deploy
 - [~] Automated activity generation from showcased projects
+- [ ] Chat to interact with the projects
 - [ ] "What is your intentïon?" as a tagline and pronunciation guide.
 - [ ] "What is your intentïon?" submission box allowing user submitted content with terms and conditions.
 - [ ] Showcase links
