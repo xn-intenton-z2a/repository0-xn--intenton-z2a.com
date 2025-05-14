@@ -409,6 +409,23 @@ Maven build output:
 [INFO] ------------------------------------------------------------------------
 ```
 
+Assume deployment role:
+```bash
+
+. ./scripts/aws-assume-agentic-lib-deployment-role.sh                                     
+```
+
+Output:
+```log
+Assumed arn:aws:iam::541134664601:role/agentic-lib-deployment-role successfully, expires: 2025-05-14T02:19:16+00:00. Identity is now:
+{
+"UserId": "AROAX37RDWOMSMQUIZOI4:agentic-lib-deployment-session-local",
+"Account": "541134664601",
+"Arn": "arn:aws:sts::541134664601:assumed-role/agentic-lib-deployment-role/agentic-lib-deployment-session-local"
+}
+```~/projects/repository0-xn--intenton-z2a.com %
+```
+
 Deploys the AWS infrastructure including an App Runner service, an SQS queue, Lambda functions, and a PostgresSQL table.
 ```bash
 
@@ -417,29 +434,45 @@ npx cdk deploy
 
 Example output:
 ```log
-...truncated...
-S3SqsBridgeStack: success: Published f23b4641b15bfe521c575e572ebe41ca2c4613e3e1ea8a9c8ef816c73832cddf:current_account-current_region
-S3SqsBridgeStack: deploying... [1/1]
-S3SqsBridgeStack: creating CloudFormation changeset...
+WebStack | 4/8 | 3:20:29 AM | UPDATE_COMPLETE      | AWS::CloudFormation::Stack                      | WebStack 
+[03:20:34] Stack WebStack has completed updating
 
- ✅  S3SqsBridgeStack
+ ✅  WebStack
 
-✨  Deployment time: 105.48s
+✨  Deployment time: 46.85s
 
 Outputs:
-S3SqsBridgeStack.BucketArn = arn:aws:s3:::s3-sqs-bridge-bucket
-S3SqsBridgeStack.OffsetsTableArn = arn:aws:dynamodb:eu-west-2:541134664601:table/offsets
-S3SqsBridgeStack.OneOffJobLambdaArn = arn:aws:lambda:eu-west-2:541134664601:function:replayBatchLambdaHandler
-S3SqsBridgeStack.ReplayQueueUrl = https://sqs.eu-west-2.amazonaws.com/541134664601/s3-sqs-bridge-replay-queue
-...truncated...
-S3SqsBridgeStack.s3BucketName = s3-sqs-bridge-bucket (Source: CDK context.)
-S3SqsBridgeStack.s3ObjectPrefix = events/ (Source: CDK context.)
-S3SqsBridgeStack.s3RetainBucket = false (Source: CDK context.)
-S3SqsBridgeStack.s3UseExistingBucket = false (Source: CDK context.)
+WebStack.ARecord = dev.web.xn--intenton-z2a.com
+WebStack.AaaaRecord = dev.web.xn--intenton-z2a.com
+WebStack.CertificateArn = arn:aws:acm:us-east-1:541134664601:certificate/73421403-bd8c-493c-888c-e3e08eec1c41
+WebStack.DistributionAccessLogBucketArn = arn:aws:s3:::dev-web-intention-com-distribution-access-logs
+WebStack.DistributionId = E24DIA1LSWOHYI
+WebStack.HostedZoneId = Z09934692CHZL2KPE9Q9F
+WebStack.OriginAccessLogBucketArn = arn:aws:s3:::dev-web-intention-com-origin-access-logs
+WebStack.OriginBucketArn = arn:aws:s3:::dev-web-intention-com
+WebStack.accessLogGroupRetentionPeriodDays = 30 (Source: CDK context.)
+WebStack.certificateId = 73421403-bd8c-493c-888c-e3e08eec1c41 (Source: CDK context.)
+WebStack.cloudTrailEnabled = true (Source: CDK context.)
+WebStack.cloudTrailEventSelectorPrefix = none (Source: CDK context.)
+WebStack.cloudTrailLogGroupPrefix = /aws/s3/ (Source: CDK context.)
+WebStack.cloudTrailLogGroupRetentionPeriodDays = 3 (Source: CDK context.)
+WebStack.defaultDocumentAtOrigin = index.html (Source: CDK context.)
+WebStack.docRootPath = public (Source: CDK context.)
+WebStack.env = dev (Source: CDK context.)
+WebStack.error404NotFoundAtDistribution = 404-error-distribution.html (Source: CDK context.)
+WebStack.hostedZoneId = Z09934692CHZL2KPE9Q9F (Source: CDK context.)
+WebStack.hostedZoneName = xn--intenton-z2a.com (Source: CDK context.)
+WebStack.logGzippedS3ObjectEventHandlerSource = target/web-1.1.0.jar (Source: CDK context.)
+WebStack.logS3ObjectEventHandlerSource = target/web-1.1.0.jar (Source: CDK context.)
+WebStack.s3RetainBucket = false (Source: CDK context.)
+WebStack.s3UseExistingBucket = false (Source: CDK context.)
+WebStack.subDomainName = web (Source: CDK context.)
+WebStack.useExistingCertificate = true (Source: CDK context.)
+WebStack.useExistingHostedZone = true (Source: CDK context.)
 Stack ARN:
-arn:aws:cloudformation:eu-west-2:541134664601:stack/S3SqsBridgeStack/30cf37a0-0504-11f0-b142-06193d47b789
+arn:aws:cloudformation:eu-west-2:541134664601:stack/WebStack/b49af1d0-2f5e-11f0-a683-063fb0a54f1d
 
-✨  Total time: 118.12s
+✨  Total time: 52.69s
 
 ```
 
@@ -449,17 +482,11 @@ Destroy a previous stack and delete related log groups:
 npx cdk destroy
 ```
 
-(The commands go in separately because the CDK can be interactive.)
+Delete the log groups:
 ```bash
 
 aws logs delete-log-group \
   --log-group-name "/aws/s3/s3-sqs-bridge-bucket"
-aws logs delete-log-group \
-  --log-group-name "/aws/lambda/s3-sqs-bridge-replay-batch-function"
-aws logs delete-log-group \
-  --log-group-name "/aws/lambda/s3-sqs-bridge-replay-function"
-aws logs delete-log-group \
-  --log-group-name "/aws/lambda/s3-sqs-bridge-source-function"
 ```
 
 # Prompts
