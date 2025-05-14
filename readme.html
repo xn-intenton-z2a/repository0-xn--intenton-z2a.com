@@ -22,94 +22,385 @@
     <p><a href="https://github.com/xn-intenton-z2a/agentic-lib">repository</a> - <a href="https://xn-intenton-z2a.github.io/agentic-lib/latest.html">latest stats</a> - <a href="https://xn-intenton-z2a.github.io/agentic-lib/all.html">all stats</a></p>
   </header>
   <section>
-    <h1 class="md-github"><a class="md-github__anchor" name="s3-sqs-bridge-versioned-amazon-s3-object-put-event-replay-capable-queuing-to-sqs" href="#s3-sqs-bridge-versioned-amazon-s3-object-put-event-replay-capable-queuing-to-sqs"><svg class="md-github__octicon md-github__octicon-link" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>s3-sqs-bridge (Versioned Amazon S3 Object Put Event replay capable queuing to SQS)</h1>
-<p class="md-github">s3-sqs-bridge integrates Amazon S3 with AWS SQS to enable versioned event replay and real-time processing using Lambda backed by a resilient PostgreSQL projection system. The GitHub Event Projections Lambda handler now features robust connection retries, enhanced logging with sensitive data masking, strict schema validation using Zod, basic in-memory metrics collection to track event processing performance, and optional dead-letter queue support for failed records.</p>
-<p class="md-github">This repository includes:</p>
-<ul class="md-github">
-<li class="md-github">AWS CloudFormation/CDK stacks for setting up the necessary AWS infrastructure.</li>
-<li class="md-github">A Node.js Lambda function for processing S3 events forwarded to SQS.</li>
-<li class="md-github">A GitHub Event Projections Lambda handler implemented in <strong class="md-github">src/lib/main.js</strong> that processes GitHub event messages from a dedicated SQS queue, validates them, and creates/upserts projections in PostgreSQL with detailed logging, retry logic, metrics collection, and dead-letter queue routing.</li>
-<li class="md-github">A comprehensive CLI for event replay, projection processing, and health checks.</li>
-</ul>
-<p class="md-github">For the full mission statement, see <a href="MISSION.md" class="md-github">MISSION.md</a>. For contribution guidelines, please refer to <a href="CONTRIBUTING.md" class="md-github">CONTRIBUTING.md</a>. Setup instructions are provided in [SETUP.md], and licensing details in <a href="LICENSE" class="md-github">LICENSE</a>.
-Additionally, visit the intentïon agentic-lib on GitHub: <a href="https://github.com/xn-intenton-z2a/agentic-lib" class="md-github">agentic-lib</a>.</p>
-<h2 class="md-github"><a class="md-github__anchor" name="key-features" href="#key-features"><svg class="md-github__octicon md-github__octicon-link" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Key Features</h2>
-<ul class="md-github">
-<li class="md-github"><strong class="md-github">Dead-Letter Queue Support:</strong> Failed GitHub event records after all retry attempts can be routed to an SQS dead-letter queue (when configured via <code class="md-github">DEAD_LETTER_QUEUE_URL</code>).</li>
-<li class="md-github"><strong class="md-github">Robust Defaults:</strong> Sensible default values prevent misconfiguration.</li>
-<li class="md-github"><strong class="md-github">Enhanced Retry Logic:</strong> Exponential backoff retry strategy for PostgreSQL connections and queries.</li>
-<li class="md-github"><strong class="md-github">Strict Validation:</strong> Input validation using Zod for GitHub event payloads.</li>
-<li class="md-github"><strong class="md-github">In-Memory Metrics:</strong> Tracks total events, successes, skips, DB failures, retry attempts, and dead-lettered events.</li>
-<li class="md-github"><strong class="md-github">HTTP Endpoints:</strong> <code class="md-github">/metrics</code> and <code class="md-github">/status</code> endpoints for real-time metrics and health checks using Express.</li>
-<li class="md-github"><strong class="md-github">High Availability:</strong> Designed for scalable deployment on AWS Fargate Spot.</li>
-</ul>
-<h2 class="md-github"><a class="md-github__anchor" name="configuration" href="#configuration"><svg class="md-github__octicon md-github__octicon-link" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Configuration</h2>
-<p class="md-github">Environment variables configure AWS services and PostgreSQL parameters. Defaults are used if variables are not set:</p>
-<ul class="md-github">
-<li class="md-github">BUCKET_NAME</li>
-<li class="md-github">OBJECT_PREFIX</li>
-<li class="md-github">REPLAY_QUEUE_URL</li>
-<li class="md-github">DIGEST_QUEUE_URL</li>
-<li class="md-github">OFFSETS_TABLE_NAME</li>
-<li class="md-github">PROJECTIONS_TABLE_NAME</li>
-<li class="md-github">SOURCE_LAMBDA_FUNCTION_NAME</li>
-<li class="md-github">AWS_ENDPOINT</li>
-</ul>
-<p class="md-github">PostgreSQL specific variables:</p>
-<ul class="md-github">
-<li class="md-github">PG_CONNECTION_STRING: PostgreSQL connection string (default: <code class="md-github">postgres://user:pass@localhost:5432/db</code>)</li>
-<li class="md-github">GITHUB_PROJECTIONS_TABLE: Table for GitHub event projections (default: <code class="md-github">github_event_projections</code>)</li>
-<li class="md-github">GITHUB_EVENT_QUEUE_URL: SQS URL for GitHub events (default: <code class="md-github">https://test/000000000000/github-event-queue-test</code>)</li>
-</ul>
-<p class="md-github">Retry configuration for PostgreSQL:</p>
-<ul class="md-github">
-<li class="md-github">PG_MAX_RETRIES: Maximum retry attempts (default: 3)</li>
-<li class="md-github">PG_RETRY_DELAY_MS: Delay in milliseconds between retries (default: 1000)</li>
-</ul>
-<p class="md-github">Dead-letter queue configuration:</p>
-<ul class="md-github">
-<li class="md-github">DEAD_LETTER_QUEUE_URL: SQS queue URL for dead-lettering failed GitHub event projections (optional)</li>
-</ul>
-<h2 class="md-github"><a class="md-github__anchor" name="metrics" href="#metrics"><svg class="md-github__octicon md-github__octicon-link" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Metrics</h2>
-<p class="md-github">The GitHub Event Projection handler now collects basic in-memory metrics during event processing:</p>
-<ul class="md-github">
-<li class="md-github"><strong class="md-github">totalEvents:</strong> Total number of events received.</li>
-<li class="md-github"><strong class="md-github">successfulEvents:</strong> Number of events processed successfully.</li>
-<li class="md-github"><strong class="md-github">skippedEvents:</strong> Number of events skipped due to invalid JSON or failed validation.</li>
-<li class="md-github"><strong class="md-github">dbFailures:</strong> Number of events that encountered database query failures after retry attempts.</li>
-<li class="md-github"><strong class="md-github">dbRetryCount:</strong> Total number of database retry attempts.</li>
-<li class="md-github"><strong class="md-github">deadLetterEvents:</strong> Number of events routed to the dead-letter queue after exhausting retries.</li>
-</ul>
-<p class="md-github">Metrics are logged after processing and can be accessed programmatically via the exported <code class="md-github">getMetrics()</code> function.</p>
-<h2 class="md-github"><a class="md-github__anchor" name="usage" href="#usage"><svg class="md-github__octicon md-github__octicon-link" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Usage</h2>
-<h3 class="md-github"><a class="md-github__anchor" name="cli-options" href="#cli-options"><svg class="md-github__octicon md-github__octicon-link" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>CLI Options</h3>
-<ul class="md-github">
-<li class="md-github"><code class="md-github">--help</code>: Show usage instructions.</li>
-<li class="md-github"><code class="md-github">--source-projection</code>: Run the Lambda handler for processing source S3 events.</li>
-<li class="md-github"><code class="md-github">--replay-projection</code>: Run the Lambda handler for replayed events.</li>
-<li class="md-github"><code class="md-github">--replay</code>: Replay all S3 object versions in order.</li>
-<li class="md-github"><code class="md-github">--healthcheck</code>: Start an HTTP health check server on port 8080.</li>
-<li class="md-github"><code class="md-github">--metrics</code>: Start HTTP metrics endpoint on port defined by <code class="md-github">METRICS_PORT</code> (default 3000).</li>
-<li class="md-github"><code class="md-github">--status-endpoint</code>: Start HTTP status endpoint on port defined by <code class="md-github">STATUS_PORT</code> (default 3000).</li>
-</ul>
-<h3 class="md-github"><a class="md-github__anchor" name="running-locally" href="#running-locally"><svg class="md-github__octicon md-github__octicon-link" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Running Locally</h3>
-<p class="md-github">Use the following npm scripts:</p>
-<ul class="md-github">
-<li class="md-github"><code class="md-github">npm start</code> to run the GitHub event projection handler (located in <strong class="md-github">src/lib/main.js</strong>).</li>
-<li class="md-github"><code class="md-github">npm run healthcheck</code> to start the health check server.</li>
-<li class="md-github"><code class="md-github">npm run replay</code> to replay S3 events.</li>
-</ul>
-<p class="md-github">Note: When running locally with a dummy event (i.e. no records), the handler will short-circuit and return success without attempting a database connection.</p>
-<h2 class="md-github"><a class="md-github__anchor" name="testing" href="#testing"><svg class="md-github__octicon md-github__octicon-link" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Testing</h2>
-<p class="md-github">This project uses Vitest for unit testing. Run the tests with:</p>
-<pre class="md-github"><code class="md-github language-bash">npm test
+    <h1 class="md-github"><a class="md-github__anchor" name="intentïoncom-repository0-xn-intenton-z2acom" href="#intentïoncom-repository0-xn-intenton-z2acom"><svg class="md-github__octicon md-github__octicon-link" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>intentïon.com (repository0-xn-intenton-z2a.com)</h1>
+<p class="md-github">The consumer front end of intentïon.com
+featuring <a href="https://github.com/xn-intenton-z2a/repository0" class="md-github">repository0</a>
+and the <a href="https://github.com/xn-intenton-z2a/agentic-lib" class="md-github">agentic-lib</a>.</p>
+<p class="md-github"><code class="md-github">xn--intenton-z2a.com</code> is a project by Polycode Limited which presents the intentïon home page: https://xn--intenton-z2a.com/</p>
+<h1 class="md-github"><a class="md-github__anchor" name="deployment" href="#deployment"><svg class="md-github__octicon md-github__octicon-link" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Deployment</h1>
+<h2 class="md-github"><a class="md-github__anchor" name="local-development-environment" href="#local-development-environment"><svg class="md-github__octicon md-github__octicon-link" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Local Development Environment</h2>
+<h3 class="md-github"><a class="md-github__anchor" name="clone-the-repository" href="#clone-the-repository"><svg class="md-github__octicon md-github__octicon-link" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Clone the Repository</h3>
+<pre class="md-github"><code class="md-github language-bash">
+git clone https://github.com/your-username/repository0-xn-intenton-z2a.com.git
+cd repository0-xn-intenton-z2a.com
 </code></pre>
+<h3 class="md-github"><a class="md-github__anchor" name="install-nodejs-dependencies-and-test" href="#install-nodejs-dependencies-and-test"><svg class="md-github__octicon md-github__octicon-link" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Install Node.js dependencies and test</h3>
+<pre class="md-github"><code class="md-github language-bash">
+npm install
+npm test
+</code></pre>
+<h3 class="md-github"><a class="md-github__anchor" name="build-and-test-the-java-application" href="#build-and-test-the-java-application"><svg class="md-github__octicon md-github__octicon-link" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Build and test the Java Application</h3>
+<pre class="md-github"><code class="md-github language-bash">./mvnw clean package
+</code></pre>
+<h3 class="md-github"><a class="md-github__anchor" name="synthesis-the-cdk" href="#synthesis-the-cdk"><svg class="md-github__octicon md-github__octicon-link" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Synthesis the CDK</h3>
+<pre class="md-github"><code class="md-github language-bash">npx cdk synth
+</code></pre>
+<h3 class="md-github"><a class="md-github__anchor" name="run-the-website-locally" href="#run-the-website-locally"><svg class="md-github__octicon md-github__octicon-link" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Run the website locally</h3>
+<pre class="md-github"><code class="md-github language-bash">http-server public/ --port 3000
+</code></pre>
+<p class="md-github">Webserver output:</p>
+<pre class="md-github"><code class="md-github language-log">Starting up http-server, serving public/
+
+http-server version: 14.1.1
+
+http-server settings: 
+CORS: disabled
+Cache: 3600 seconds
+Connection Timeout: 120 seconds
+Directory Listings: visible
+AutoIndex: visible
+Serve GZIP Files: false
+Serve Brotli Files: false
+Default File Extension: none
+
+Available on:
+  http://127.0.0.1:3000
+  http://192.168.1.121:3000
+  http://10.14.0.2:3000
+  http://169.254.59.96:3000
+Hit CTRL-C to stop the server
+</code></pre>
+<p class="md-github">Access via http://127.0.0.1:3000 or install <a href="https://ngrok.com/" class="md-github">ngrok</a> and get a SSL terminated public URL:</p>
+<pre class="md-github"><code class="md-github language-bash">ngrok http 3000
+</code></pre>
+<p class="md-github">ngrok runs:</p>
+<pre class="md-github"><code class="md-github language-log">ngrok                                                                                                                                                                                                          (Ctrl+C to quit)
+                                                                                                                                                                                                                               
+🤖 Want to hang with ngrokkers on our new Discord? http://ngrok.com/discord                                                                                                                                                    
+                                                                                                                                                                                                                               
+Session Status                online                                                                                                                                                                                           
+Account                       Antony @ Polycode (Plan: Free)                                                                                                                                                                   
+Version                       3.22.1                                                                                                                                                                                           
+Region                        Europe (eu)                                                                                                                                                                                      
+Web Interface                 http://127.0.0.1:4040                                                                                                                                                                            
+Forwarding                    https://d57b-146-70-103-222.ngrok-free.app -&gt; http://localhost:3000                                                                                                                              
+                                                                                                                                                                                                                               
+Connections                   ttl     opn     rt1     rt5     p50     p90                                                                                                                                                      
+                              0       0       0.00    0.00    0.00    0.00                  
+</code></pre>
+<p class="md-github">Here you can open https://d57b-146-70-103-222.ngrok-free.app in a browser of your choice (you'll have your own URL
+unless I am still running this one, I don't know when the id's roll so I might.)</p>
+<h2 class="md-github"><a class="md-github__anchor" name="setup-for-aws-cdk" href="#setup-for-aws-cdk"><svg class="md-github__octicon md-github__octicon-link" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Setup for AWS CDK</h2>
+<p class="md-github">You'll need to have run <code class="md-github">cdk bootstrap</code> to set up the environment for the CDK. This is a one-time setup per AWS account and region.
+General administrative permissions are required to run this command. (NPM installed the CDK.)</p>
+<p class="md-github">In this example for user <code class="md-github">antony-local-user</code> and <code class="md-github">agentic-lib-github-actions-role</code> we would add the following
+trust policy so that they can assume the role: <code class="md-github">agentic-lib-deployment-role</code>:</p>
+<pre class="md-github"><code class="md-github language-json">{
+	&quot;Version&quot;: &quot;2012-10-17&quot;,
+	&quot;Statement&quot;: [
+		{
+			&quot;Sid&quot;: &quot;Statement1&quot;,
+			&quot;Effect&quot;: &quot;Allow&quot;,
+			&quot;Action&quot;: [&quot;sts:AssumeRole&quot;, &quot;sts:TagSession&quot;],
+			&quot;Resource&quot;: [&quot;arn:aws:iam::541134664601:role/agentic-lib-deployment-role&quot;]
+		}
+	]
+}
+</code></pre>
+<p class="md-github">The <code class="md-github">agentic-lib-github-actions-role</code> also needs the following trust entity to allow GitHub Actions to assume the role:</p>
+<pre class="md-github"><code class="md-github language-json">{
+    &quot;Version&quot;: &quot;2012-10-17&quot;,
+    &quot;Statement&quot;: [
+        {
+            &quot;Effect&quot;: &quot;Allow&quot;,
+            &quot;Principal&quot;: {
+                &quot;Federated&quot;: &quot;arn:aws:iam::541134664601:oidc-provider/token.actions.githubusercontent.com&quot;
+            },
+            &quot;Action&quot;: &quot;sts:AssumeRoleWithWebIdentity&quot;,
+            &quot;Condition&quot;: {
+                &quot;StringEquals&quot;: {
+                    &quot;token.actions.githubusercontent.com:aud&quot;: &quot;sts.amazonaws.com&quot;
+                },
+                &quot;StringLike&quot;: {
+                    &quot;token.actions.githubusercontent.com:sub&quot;: &quot;repo:xn-intenton-z2a/s3-sqs-bridge:*&quot;
+                }
+            }
+        }
+    ]
+}
+</code></pre>
+<p class="md-github">Create the IAM role with the necessary permissions to assume role from your authenticated user:</p>
+<pre class="md-github"><code class="md-github language-bash">
+cat &lt;&lt;'EOF' &gt; agentic-lib-deployment-trust-policy.json
+{
+  &quot;Version&quot;: &quot;2012-10-17&quot;,
+  &quot;Statement&quot;: [
+    {
+      &quot;Effect&quot;: &quot;Allow&quot;,
+      &quot;Principal&quot;: {
+        &quot;AWS&quot;: [
+          &quot;arn:aws:iam::541134664601:user/antony-local-user&quot;,
+          &quot;arn:aws:iam::541134664601:role/agentic-lib-github-actions-role&quot;
+        ]
+      },
+      &quot;Action&quot;: &quot;sts:AssumeRole&quot;
+    }
+  ]
+}
+EOF
+aws iam create-role \
+  --role-name agentic-lib-deployment-role \
+  --assume-role-policy-document file://agentic-lib-deployment-trust-policy.json
+</code></pre>
+<p class="md-github">Add the necessary permissions to deploy <code class="md-github">repository0-xn-intenton-z2a.com</code>:</p>
+<pre class="md-github"><code class="md-github language-bash">
+cat &lt;&lt;'EOF' &gt; agentic-lib-deployment-permissions-policy.json
+{
+  &quot;Version&quot;: &quot;2012-10-17&quot;,
+  &quot;Statement&quot;: [
+    {
+      &quot;Effect&quot;: &quot;Allow&quot;,
+      &quot;Action&quot;: [
+        &quot;cloudformation:*&quot;,
+        &quot;iam:*&quot;,
+        &quot;s3:*&quot;,
+        &quot;cloudtrail:*&quot;,
+        &quot;logs:*&quot;,
+        &quot;events:*&quot;,
+        &quot;lambda:*&quot;,
+        &quot;dynamodb:*&quot;,
+        &quot;sqs:*&quot;,
+        &quot;sts:AssumeRole&quot;
+      ],
+      &quot;Resource&quot;: &quot;*&quot;
+    }
+  ]
+}
+EOF
+aws iam put-role-policy \
+  --role-name agentic-lib-deployment-role \
+  --policy-name agentic-lib-deployment-permissions-policy \
+  --policy-document file://agentic-lib-deployment-permissions-policy.json
+</code></pre>
+<p class="md-github">Assume the deployment role:</p>
+<pre class="md-github"><code class="md-github language-bash">
+ROLE_ARN=&quot;arn:aws:iam::541134664601:role/agentic-lib-deployment-role&quot;
+SESSION_NAME=&quot;agentic-lib-deployment-session-local&quot;
+ASSUME_ROLE_OUTPUT=$(aws sts assume-role --role-arn &quot;$ROLE_ARN&quot; --role-session-name &quot;$SESSION_NAME&quot; --output json)
+if [ $? -ne 0 ]; then
+  echo &quot;Error: Failed to assume role.&quot;
+  exit 1
+fi
+export AWS_ACCESS_KEY_ID=$(echo &quot;$ASSUME_ROLE_OUTPUT&quot; | jq -r '.Credentials.AccessKeyId')
+export AWS_SECRET_ACCESS_KEY=$(echo &quot;$ASSUME_ROLE_OUTPUT&quot; | jq -r '.Credentials.SecretAccessKey')
+export AWS_SESSION_TOKEN=$(echo &quot;$ASSUME_ROLE_OUTPUT&quot; | jq -r '.Credentials.SessionToken')
+EXPIRATION=$(echo &quot;$ASSUME_ROLE_OUTPUT&quot; | jq -r '.Credentials.Expiration')
+echo &quot;Assumed role successfully. Credentials valid until: $EXPIRATION&quot;
+</code></pre>
+<p class="md-github">Output:</p>
+<pre class="md-github"><code class="md-github language-log">Assumed role successfully. Credentials valid until: 2025-03-25T02:27:18+00:00
+</code></pre>
+<p class="md-github">Check the session:</p>
+<pre class="md-github"><code class="md-github language-bash">
+aws sts get-caller-identity
+</code></pre>
+<p class="md-github">Output:</p>
+<pre class="md-github"><code class="md-github language-json">{
+  &quot;UserId&quot;: &quot;AROAX37RDWOM7ZHORNHKD:agentic-lib-deployment-session&quot;,
+  &quot;Account&quot;: &quot;541134664601&quot;,
+  &quot;Arn&quot;: &quot;arn:aws:sts::541134664601:assumed-role/agentic-lib-deployment-role/agentic-lib-deployment-session&quot;
+}
+</code></pre>
+<p class="md-github">Check the permissions of the role:</p>
+<pre class="md-github"><code class="md-github language-bash">
+aws iam list-role-policies \
+  --role-name agentic-lib-deployment-role
+</code></pre>
+<p class="md-github">Output (the policy we created above):</p>
+<pre class="md-github"><code class="md-github language-json">{
+  &quot;PolicyNames&quot;: [
+    &quot;agentic-lib-deployment-permissions-policy&quot;
+  ]
+}
+</code></pre>
+<p class="md-github">An example of the GitHub Actions role being assumed in a GitHub Actions Workflow:</p>
+<pre class="md-github"><code class="md-github language-yaml">      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::541134664601:role/agentic-lib-deployment-role
+          aws-region: eu-west-2
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+      - run: npm install -g aws-cdk
+      - run: aws s3 ls --region eu-west-2
+</code></pre>
+<h2 class="md-github"><a class="md-github__anchor" name="deployment-to-aws" href="#deployment-to-aws"><svg class="md-github__octicon md-github__octicon-link" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Deployment to AWS</h2>
+<p class="md-github">See also:</p>
+<ul class="md-github">
+<li class="md-github">local running using <a href="LOCALSTACK.md" class="md-github">Localstack</a>.</li>
+<li class="md-github">Debugging notes for the AWS deployment here <a href="DEBUGGING.md" class="md-github">DEBUGGING</a>.</li>
+</ul>
+<p class="md-github">Package the CDK, deploy the CDK stack which rebuilds the Docker image, and deploy the AWS infrastructure:</p>
+<pre class="md-github"><code class="md-github language-bash">
+./mvnw clean package
+</code></pre>
+<p class="md-github">Maven build output:</p>
+<pre class="md-github"><code class="md-github language-log">...truncated...
+[INFO] Replacing original artifact with shaded artifact.
+[INFO] Replacing /Users/antony/projects/repository0-xn--intenton-z2a.com/target/web-1.1.0.jar with /Users/antony/projects/repository0-xn--intenton-z2a.com/target/web-1.1.0-shaded.jar
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  15.522 s
+[INFO] Finished at: 2025-05-14T03:16:19+02:00
+[INFO] ------------------------------------------------------------------------
+</code></pre>
+<p class="md-github">Assume deployment role:</p>
+<pre class="md-github"><code class="md-github language-bash">
+. ./scripts/aws-assume-agentic-lib-deployment-role.sh                                     
+</code></pre>
+<p class="md-github">Output:</p>
+<pre class="md-github"><code class="md-github language-log">Assumed arn:aws:iam::541134664601:role/agentic-lib-deployment-role successfully, expires: 2025-05-14T02:19:16+00:00. Identity is now:
+{
+&quot;UserId&quot;: &quot;AROAX37RDWOMSMQUIZOI4:agentic-lib-deployment-session-local&quot;,
+&quot;Account&quot;: &quot;541134664601&quot;,
+&quot;Arn&quot;: &quot;arn:aws:sts::541134664601:assumed-role/agentic-lib-deployment-role/agentic-lib-deployment-session-local&quot;
+}
+```~/projects/repository0-xn--intenton-z2a.com %
+</code></pre>
+<p class="md-github">Deploys the AWS infrastructure including an App Runner service, an SQS queue, Lambda functions, and a PostgresSQL table.</p>
+<pre class="md-github"><code class="md-github language-bash">
+npx cdk deploy
+</code></pre>
+<p class="md-github">Example output:</p>
+<pre class="md-github"><code class="md-github language-log">WebStack | 4/8 | 3:20:29 AM | UPDATE_COMPLETE      | AWS::CloudFormation::Stack                      | WebStack 
+[03:20:34] Stack WebStack has completed updating
+
+ ✅  WebStack
+
+✨  Deployment time: 46.85s
+
+Outputs:
+WebStack.ARecord = dev.web.xn--intenton-z2a.com
+WebStack.AaaaRecord = dev.web.xn--intenton-z2a.com
+WebStack.CertificateArn = arn:aws:acm:us-east-1:541134664601:certificate/73421403-bd8c-493c-888c-e3e08eec1c41
+WebStack.DistributionAccessLogBucketArn = arn:aws:s3:::dev-web-intention-com-distribution-access-logs
+WebStack.DistributionId = E24DIA1LSWOHYI
+WebStack.HostedZoneId = Z09934692CHZL2KPE9Q9F
+WebStack.OriginAccessLogBucketArn = arn:aws:s3:::dev-web-intention-com-origin-access-logs
+WebStack.OriginBucketArn = arn:aws:s3:::dev-web-intention-com
+WebStack.accessLogGroupRetentionPeriodDays = 30 (Source: CDK context.)
+WebStack.certificateId = 73421403-bd8c-493c-888c-e3e08eec1c41 (Source: CDK context.)
+WebStack.cloudTrailEnabled = true (Source: CDK context.)
+WebStack.cloudTrailEventSelectorPrefix = none (Source: CDK context.)
+WebStack.cloudTrailLogGroupPrefix = /aws/s3/ (Source: CDK context.)
+WebStack.cloudTrailLogGroupRetentionPeriodDays = 3 (Source: CDK context.)
+WebStack.defaultDocumentAtOrigin = index.html (Source: CDK context.)
+WebStack.docRootPath = public (Source: CDK context.)
+WebStack.env = dev (Source: CDK context.)
+WebStack.error404NotFoundAtDistribution = 404-error-distribution.html (Source: CDK context.)
+WebStack.hostedZoneId = Z09934692CHZL2KPE9Q9F (Source: CDK context.)
+WebStack.hostedZoneName = xn--intenton-z2a.com (Source: CDK context.)
+WebStack.logGzippedS3ObjectEventHandlerSource = target/web-1.1.0.jar (Source: CDK context.)
+WebStack.logS3ObjectEventHandlerSource = target/web-1.1.0.jar (Source: CDK context.)
+WebStack.s3RetainBucket = false (Source: CDK context.)
+WebStack.s3UseExistingBucket = false (Source: CDK context.)
+WebStack.subDomainName = web (Source: CDK context.)
+WebStack.useExistingCertificate = true (Source: CDK context.)
+WebStack.useExistingHostedZone = true (Source: CDK context.)
+Stack ARN:
+arn:aws:cloudformation:eu-west-2:541134664601:stack/WebStack/b49af1d0-2f5e-11f0-a683-063fb0a54f1d
+
+✨  Total time: 52.69s
+
+</code></pre>
+<p class="md-github">Destroy a previous stack and delete related log groups:</p>
+<pre class="md-github"><code class="md-github language-bash">
+npx cdk destroy
+</code></pre>
+<p class="md-github">Delete the log groups:</p>
+<pre class="md-github"><code class="md-github language-bash">
+aws logs delete-log-group \
+  --log-group-name &quot;/aws/s3/s3-sqs-bridge-bucket&quot;
+</code></pre>
+<h1 class="md-github"><a class="md-github__anchor" name="prompts" href="#prompts"><svg class="md-github__octicon md-github__octicon-link" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Prompts</h1>
+<p class="md-github">Website brief:</p>
+<pre class="md-github"><code class="md-github language-shell">I want a single index.html file that is well-formed, declares
+and adheres to all the latest accessibility guidelines and is
+responsively rendered on all mainstream devices.
+
+The page should render the word intentïon when the screen is
+tapped (or mouse moved) for 3 seconds then fade out.
+
+The word intentïon should be in dark grey (charcoal?) and
+as wide as the horizontal viewport. The background should be
+light grey, almost white with a hint of yellow (like fog
+under bright sunlight).
+
+The background (full screen, no text) should have the
+attached images all fading in and out of transparency at
+different rates.
+
+Please show the HTML (all inline JS and CSS) the images
+and any libraries you pull in would be links.
+</code></pre>
+<h1 class="md-github"><a class="md-github__anchor" name="todo" href="#todo"><svg class="md-github__octicon md-github__octicon-link" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>TODO</h1>
+<p class="md-github">Public brand:</p>
+<ul class="md-github md-github__task-list">
+<li class="md-github md-github__task-item"><input type="checkbox" disabled="true" class="md-github__task-checkbox" checked="true"> Website for intentïon.com text light, light grey or misty: https://xn--intenton-z2a.com/</li>
+<li class="md-github md-github__task-item"><input type="checkbox" disabled="true" class="md-github__task-checkbox" checked="true"> Logo selection</li>
+<li class="md-github md-github__task-item"><input type="checkbox" disabled="true" class="md-github__task-checkbox" checked="true"> Sign up for LinkTree</li>
+<li class="md-github md-github__task-item"><input type="checkbox" disabled="true" class="md-github__task-checkbox" checked="true"> CDK deploy</li>
+<li class="md-github md-github__task-item"><input type="checkbox" disabled="true" class="md-github__task-checkbox" checked="true"> Swap to use repository0 template.</li>
+<li class="md-github md-github__task-item"><input type="checkbox" disabled="true" class="md-github__task-checkbox" checked="true"> CI deployment</li>
+<li class="md-github">[~] Swap over to host live site from the CDK deployment by adding default environment 'ci' and the option of 'prod'.</li>
+<li class="md-github">[~] Automated activity generation from showcased projects</li>
+<li class="md-github md-github__task-item"><input type="checkbox" disabled="true" class="md-github__task-checkbox"> Chat to interact with the projects</li>
+<li class="md-github md-github__task-item"><input type="checkbox" disabled="true" class="md-github__task-checkbox"> Showcase links</li>
+<li class="md-github md-github__task-item"><input type="checkbox" disabled="true" class="md-github__task-checkbox"> Automated feed generation</li>
+<li class="md-github md-github__task-item"><input type="checkbox" disabled="true" class="md-github__task-checkbox"> Add contact bots for socials</li>
+<li class="md-github md-github__task-item"><input type="checkbox" disabled="true" class="md-github__task-checkbox"> Add contact bots via Slack / Discord or Redit</li>
+<li class="md-github md-github__task-item"><input type="checkbox" disabled="true" class="md-github__task-checkbox"> Register: intentiion.com, intentionai.com, intentiionai.com, intentiionaii.com</li>
+<li class="md-github md-github__task-item"><input type="checkbox" disabled="true" class="md-github__task-checkbox"> Brand ownership</li>
+<li class="md-github md-github__task-item"><input type="checkbox" disabled="true" class="md-github__task-checkbox"> Brand protection</li>
+<li class="md-github md-github__task-item"><input type="checkbox" disabled="true" class="md-github__task-checkbox"> Web analytics</li>
+<li class="md-github md-github__task-item"><input type="checkbox" disabled="true" class="md-github__task-checkbox"> Link to Linktree</li>
+<li class="md-github md-github__task-item"><input type="checkbox" disabled="true" class="md-github__task-checkbox"> Audience Dashboard</li>
+</ul>
+<h1 class="md-github"><a class="md-github__anchor" name="ownership" href="#ownership"><svg class="md-github__octicon md-github__octicon-link" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Ownership</h1>
+<p class="md-github"><code class="md-github">xn--intenton-z2a.com</code> is a project by Polycode Limited which presents the intentïon home page: https://xn--intenton-z2a.com/</p>
 <h2 class="md-github"><a class="md-github__anchor" name="license" href="#license"><svg class="md-github__octicon md-github__octicon-link" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>License</h2>
-<p class="md-github">Distributed under the MIT License. See <a href="LICENSE" class="md-github">LICENSE</a> for details.</p>
+<p class="md-github">This project is licensed under the GNU General Public License (GPL). See <a href="LICENSE" class="md-github">LICENSE</a> for details.</p>
+<p class="md-github">License notice:</p>
+<pre class="md-github"><code class="md-github">agentic-lib
+Copyright (C) 2025 Polycode Limited
+
+agentic-lib is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License v3.0 (GPL‑3).
+along with this program. If not, see &lt;https://www.gnu.org/licenses/&gt;.
+
+IMPORTANT: Any derived work must include the following attribution:
+&quot;This work is derived from https://github.com/xn-intenton-z2a/agentic-lib&quot;
+</code></pre>
+<p class="md-github"><em class="md-github">IMPORTANT</em>: The project README and any derived work should always include the following attribution:
+<em class="md-github">&quot;This work is derived from https://github.com/xn-intenton-z2a/repository0-xn-intenton-z2a.com&quot;</em></p>
+<h1 class="md-github"><a class="md-github__anchor" name="thank-you" href="#thank-you"><svg class="md-github__octicon md-github__octicon-link" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Thank you</h1>
+<p class="md-github">Thank you for your interest in intentïon. Please be careful with our public brand.</p>
 
   </section>
   <footer>
-    <p>Generated on 2025-05-13T10:39:25.945Z</p>
+    <p>Generated on 2025-05-14T10:38:49.447Z</p>
   </footer>
 </body>
 </html>
