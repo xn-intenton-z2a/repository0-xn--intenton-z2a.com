@@ -31,6 +31,7 @@ public class LogGzippedS3ObjectTest {
                     //"JSII_SILENCE_WARNING_UNTESTED_NODE_VERSION", "true",
                     //"JSII_SILENCE_WARNING_DEPRECATED_NODE_VERSION", "true",
                     "TARGET_ENV", "test",
+                    "AWS_REGION", "eu-west-2",
                     "CDK_DEFAULT_ACCOUNT", testAccount,
                     "CDK_DEFAULT_REGION", "eu-west-2"
             );
