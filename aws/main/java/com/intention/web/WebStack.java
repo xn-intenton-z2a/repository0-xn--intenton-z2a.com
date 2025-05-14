@@ -328,23 +328,6 @@ public class WebStack extends Stack {
                 .originAccessIdentity(originIdentity)
                 .build();
 
-        // Deploy the web website files to the web website bucket
-        ISource docRootSource = Source.asset(docRootPath, AssetOptions.builder()
-                .assetHashType(AssetHashType.SOURCE)
-                .build());
-        this.deployment = BucketDeployment.Builder.create(this, "DocRootToOriginDeployment")
-                .sources(List.of(docRootSource))
-                .destinationBucket(this.originBucket)
-                .distribution(this.distribution)
-                .distributionPaths(List.of("/*"))
-                .retainOnDelete(false)
-                .logRetention(RetentionDays.THREE_DAYS)
-                .expires(Expiration.after(Duration.minutes(5)))
-                .prune(true)
-                .build();
-
-        logger.info("Deployed files: from %s".formatted(docRootPath));
-
         // Create a certificate for the website domain
 
         if (useExistingHostedZone) {
@@ -413,6 +396,22 @@ public class WebStack extends Stack {
                 .build();
         this.distributionUrl = "https://%s/".formatted(this.distribution.getDomainName());
         logger.info("Distribution URL: %s".formatted(distributionUrl));
+
+        // Deploy the web website files to the web website bucket and invalidate distribution
+        ISource docRootSource = Source.asset(docRootPath, AssetOptions.builder()
+                .assetHashType(AssetHashType.SOURCE)
+                .build());
+        logger.info("Will deploy files from: %s".formatted(docRootPath));
+        this.deployment = BucketDeployment.Builder.create(this, "DocRootToOriginDeployment")
+                .sources(List.of(docRootSource))
+                .destinationBucket(this.originBucket)
+                .distribution(this.distribution)
+                .distributionPaths(List.of("/*"))
+                .retainOnDelete(false)
+                .logRetention(RetentionDays.THREE_DAYS)
+                .expires(Expiration.after(Duration.minutes(5)))
+                .prune(true)
+                .build();
 
         // Create Route53 record for use with CloudFront distribution
         this.aRecord = ARecord.Builder
