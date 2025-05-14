@@ -14,11 +14,10 @@ Public brand:
 - [x] Sign up for LinkTree
 - [x] CDK deploy
 - [x] Swap to use repository0 template.
-- [~] CI deployment
+- [x] CI deployment
+- [~] Swap over to host live site from the CDK deployment by adding default environment 'ci' and the option of 'prod'.
 - [~] Automated activity generation from showcased projects
 - [ ] Chat to interact with the projects
-- [ ] "What is your intentïon?" as a tagline and pronunciation guide.
-- [ ] "What is your intentïon?" submission box allowing user submitted content with terms and conditions.
 - [ ] Showcase links
 - [ ] Automated feed generation
 - [ ] Add contact bots for socials
