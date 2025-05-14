@@ -444,7 +444,7 @@ IMPORTANT: Any derived work must include the following attribution:
 ```
 
 *IMPORTANT*: The project README and any derived work should always include the following attribution:
-_"This work is derived from https://github.com/xn-intenton-z2a/agentic-lib"_
+_"This work is derived from https://github.com/xn-intenton-z2a/repository0-xn-intenton-z2a.com"_
 
 # Thank you
 
