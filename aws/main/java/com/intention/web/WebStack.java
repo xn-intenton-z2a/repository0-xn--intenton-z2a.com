@@ -210,7 +210,7 @@ public class WebStack extends Stack {
 
         public static String buildDomainName(String env, String subDomainName, String hostedZoneName) { return env.equals("prod") ? hostedZoneName : Builder.buildNonProdDomainName(env, subDomainName, hostedZoneName); }
         public static String buildNonProdDomainName(String env, String subDomainName, String hostedZoneName) { return "%s.%s.%s".formatted(env, subDomainName, hostedZoneName); }
-        public static String buildDashedDomainName(String domainName) { return ResourceNameUtils.convertDashSeparatedToDotSeparated(domainName, domainNameMappings); }
+        public static String buildDashedDomainName(String env, String subDomainName, String hostedZoneName) { return ResourceNameUtils.convertDashSeparatedToDotSeparated("%s.%s.%s".formatted(env, subDomainName, hostedZoneName), domainNameMappings); }
         public static String buildOriginBucketName(String dashedDomainName){ return dashedDomainName; }
         public static String buildCloudTrailLogBucketName(String dashedDomainName) { return "%s-cloud-trail".formatted(dashedDomainName); }
         public static String buildOriginAccessLogBucketName(String dashedDomainName) { return "%s-origin-access-logs".formatted(dashedDomainName); }
@@ -244,7 +244,7 @@ public class WebStack extends Stack {
         int cloudTrailLogGroupRetentionPeriodDays = Integer.parseInt(this.getConfigValue(builder.cloudTrailLogGroupRetentionPeriodDays, "cloudTrailLogGroupRetentionPeriodDays"));
         int accessLogGroupRetentionPeriodDays = Integer.parseInt(this.getConfigValue(builder.accessLogGroupRetentionPeriodDays, "accessLogGroupRetentionPeriodDays"));
         this.domainName = Builder.buildDomainName(env, subDomainName, hostedZoneName);
-        String dashedDomainName = Builder.buildDashedDomainName(this.domainName);
+        String dashedDomainName = Builder.buildDashedDomainName(env, subDomainName, hostedZoneName);
         String originBucketName = Builder.buildOriginBucketName(dashedDomainName);
         boolean s3UseExistingBucket = Boolean.parseBoolean(this.getConfigValue(builder.s3UseExistingBucket, "s3UseExistingBucket"));
         boolean s3RetainBucket = Boolean.parseBoolean(this.getConfigValue(builder.s3RetainBucket, "s3RetainBucket"));
