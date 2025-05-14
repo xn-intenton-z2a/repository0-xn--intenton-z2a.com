@@ -6,29 +6,6 @@ and the [agentic-lib](https://github.com/xn-intenton-z2a/agentic-lib).
 
 `xn--intenton-z2a.com` is a project by Polycode Limited which presents the intentïon home page: https://xn--intenton-z2a.com/
 
-## TODO
-
-Public brand:
-- [x] Website for intentïon.com text light, light grey or misty: https://xn--intenton-z2a.com/
-- [x] Logo selection
-- [x] Sign up for LinkTree
-- [x] CDK deploy
-- [x] Swap to use repository0 template.
-- [x] CI deployment
-- [~] Swap over to host live site from the CDK deployment by adding default environment 'ci' and the option of 'prod'.
-- [~] Automated activity generation from showcased projects
-- [ ] Chat to interact with the projects
-- [ ] Showcase links
-- [ ] Automated feed generation
-- [ ] Add contact bots for socials
-- [ ] Add contact bots via Slack / Discord or Redit
-- [ ] Register: intentiion.com, intentionai.com, intentiionai.com, intentiionaii.com
-- [ ] Brand ownership
-- [ ] Brand protection
-- [ ] Web analytics
-- [ ] Link to Linktree
-- [ ] Audience Dashboard
-
 # Deployment
 
 ## Local Development Environment
@@ -413,39 +390,28 @@ Please show the HTML (all inline JS and CSS) the images
 and any libraries you pull in would be links.
 ```
 
-## CDK  Installation and initialisation of a project deployment directory
+# TODO
 
-Create a deployment directory, initialise it with a CDK project then move the files to the root of the repository:
-````bash
- % mkdir account
- % cd ./account
- % cdk init app --language java
-Applying project template app for java
-# Welcome to your CDK Java project!
-...
- % rm -rf target README .gitignore
-mv -v * ../.
-cdk.json -> .././cdk.json
-pom.xml -> .././pom.xml
-src -> .././src
- % cd ..
- % rm -rf ./account
-````
-
-## The CDK README
-
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
-
-It is a [Maven](https://maven.apache.org/) based project, so you can open this project with any Maven compatible Java IDE to build and run tests.
-
-Useful commands:
-
-* `./mvnw package`     compile and run tests
-* `cdk ls`          list all stacks in the app
-* `cdk synth`       emits the synthesized CloudFormation template
-* `cdk deploy`      deploy this stack to your default AWS account/region
-* `cdk diff`        compare deployed stack with current state
-* `cdk docs`        open CDK documentation
+Public brand:
+- [x] Website for intentïon.com text light, light grey or misty: https://xn--intenton-z2a.com/
+- [x] Logo selection
+- [x] Sign up for LinkTree
+- [x] CDK deploy
+- [x] Swap to use repository0 template.
+- [x] CI deployment
+- [~] Swap over to host live site from the CDK deployment by adding default environment 'ci' and the option of 'prod'.
+- [~] Automated activity generation from showcased projects
+- [ ] Chat to interact with the projects
+- [ ] Showcase links
+- [ ] Automated feed generation
+- [ ] Add contact bots for socials
+- [ ] Add contact bots via Slack / Discord or Redit
+- [ ] Register: intentiion.com, intentionai.com, intentiionai.com, intentiionaii.com
+- [ ] Brand ownership
+- [ ] Brand protection
+- [ ] Web analytics
+- [ ] Link to Linktree
+- [ ] Audience Dashboard
 
 # Ownership
 
