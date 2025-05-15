@@ -411,19 +411,18 @@ Public brand:
 - [x] Swap to use repository0 template.
 - [x] CI deployment
 - [x] Swap over to host live site from the CDK deployment by adding default environment 'ci' and the option of 'prod'.
-- [~] Automated activity generation from showcased projects
+- [x] Chat to interact with the projects
 - [ ] Change AWS_CERTIFICATE_ID to ARN
 - [ ] Change AWS_HOSTED_ZONE_ID to ARN (if possible to look up by ARN)
 - [ ] Read the primary domain from the AWS hosted zone (assuming we can look up by ARN)
-- [ ] Chat to interact with the projects
-- [ ] Showcase links
+- [ ] Automated activity generation from showcased repositories
+- [ ] Showcase completed projects
+- [ ] Generate articles from the library - like feature generation - then use Markdown to HTML to generate the articles.
+- [ ] Announce articles on socials
 - [ ] Automated feed generation
+- [ ] Publish feed generations to socials
 - [ ] Add contact bots for socials
 - [ ] Add contact bots via Slack / Discord or Redit
-- [ ] Register: intentiion.com, intentionai.com, intentiionai.com, intentiionaii.com
-- [ ] Brand ownership
-- [ ] Brand protection
-- [ ] Web analytics
 - [ ] Link to Linktree
 - [ ] Audience Dashboard
 
