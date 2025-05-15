@@ -30,17 +30,17 @@
             50%     { opacity: 1; }
         }
 
+        /*
         #what {
             color: #333;
             position: absolute;
             top: 14%;
-            /* left position will be set dynamically by JavaScript */
             transform: translateY(-50%);
             font-size: 5vw;
             opacity: 0;
             transition: opacity 3s;
-            pointer-events: none; /* Allow mouse events to pass through to elements below */
-        }
+            pointer-events: none;
+        }*/
 
         #intention {
             color: #333;
@@ -54,6 +54,7 @@
             pointer-events: none; /* Allow mouse events to pass through to elements below */
         }
 
+        /*
         #giscus-container {
             position: absolute;
             width: 100%;
@@ -61,17 +62,15 @@
             transform: translateX(-50%);
             top: 20px;
             z-index: -1000;
-            /* Add padding to create space around the content */
             padding: 0 5%;
             box-sizing: border-box;
         }
-
-        /* Apply 1/3 width only in landscape mode */
         @media (orientation: landscape) {
             #giscus-container {
                 width: 33%;
             }
         }
+        */
     </style>
 </head>
 <body>
@@ -82,7 +81,7 @@
 <div class="fogFour"></div>
 <div class="fogFive"></div>
 
-<div id="what">What is your</div>
+<!--div id="what">What is your</div-->
 <div id="intention">intentïon</div>
 
 <!-- ─────────────── giscus embed ─────────────── -->
