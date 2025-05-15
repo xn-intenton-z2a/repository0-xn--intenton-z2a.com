@@ -33,6 +33,7 @@ import software.amazon.awscdk.services.logs.RetentionDays;
 import software.amazon.awscdk.services.route53.ARecord;
 import software.amazon.awscdk.services.route53.AaaaRecord;
 import software.amazon.awscdk.services.route53.HostedZone;
+import software.amazon.awscdk.services.route53.HostedZoneAttributes;
 import software.amazon.awscdk.services.route53.IHostedZone;
 import software.amazon.awscdk.services.route53.RecordTarget;
 import software.amazon.awscdk.services.route53.targets.CloudFrontTarget;
@@ -237,16 +238,19 @@ public class WebStack extends Stack {
         super(scope, id, props);
 
         boolean useExistingHostedZone = Boolean.parseBoolean(this.getConfigValue(builder.useExistingHostedZone, "useExistingHostedZone"));
-        String hostedZoneName;
+        String hostedZoneName = this.getConfigValue(builder.hostedZoneName, "hostedZoneName");
         if (useExistingHostedZone) {
-            String hostedZoneId = this.getConfigValue(builder.hostedZoneId, "hostedZoneId");
-            this.hostedZone = HostedZone.fromHostedZoneId(this, "HostedZone", hostedZoneId);
-            //this.hostedZone = HostedZone.fromHostedZoneAttributes(this, "HostedZone", HostedZoneAttributes.builder()
-            //        .zoneName(hostedZoneName)
-            //        .build());
-            hostedZoneName = this.hostedZone.getZoneName();
+            //String hostedZoneId = this.getConfigValue(builder.hostedZoneId, "hostedZoneId");
+            //this.hostedZone = HostedZone.fromLookup(this, "HostedZone", HostedZoneProviderProps.builder()
+            //        .domainName(hostedZoneName).build());
+            //this.hostedZone = HostedZone.fromHostedZoneId(this, "HostedZone", hostedZoneId);
+            this.hostedZone = HostedZone.fromHostedZoneAttributes(this, "HostedZone", HostedZoneAttributes.builder()
+                    .zoneName(hostedZoneName)
+                    .hostedZoneId(builder.hostedZoneId)
+                    .build());
+            //hostedZoneName = this.hostedZone.getZoneName();
         } else {
-            hostedZoneName = this.getConfigValue(builder.hostedZoneName, "hostedZoneName");
+            //hostedZoneName = this.getConfigValue(builder.hostedZoneName, "hostedZoneName");
             this.hostedZone = HostedZone.Builder
                     .create(this, "HostedZone")
                     .zoneName(hostedZoneName)
