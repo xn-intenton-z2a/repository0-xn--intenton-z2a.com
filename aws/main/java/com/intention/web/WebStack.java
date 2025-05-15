@@ -240,17 +240,12 @@ public class WebStack extends Stack {
         boolean useExistingHostedZone = Boolean.parseBoolean(this.getConfigValue(builder.useExistingHostedZone, "useExistingHostedZone"));
         String hostedZoneName = this.getConfigValue(builder.hostedZoneName, "hostedZoneName");
         if (useExistingHostedZone) {
-            //String hostedZoneId = this.getConfigValue(builder.hostedZoneId, "hostedZoneId");
-            //this.hostedZone = HostedZone.fromLookup(this, "HostedZone", HostedZoneProviderProps.builder()
-            //        .domainName(hostedZoneName).build());
-            //this.hostedZone = HostedZone.fromHostedZoneId(this, "HostedZone", hostedZoneId);
+            String hostedZoneId = this.getConfigValue(builder.hostedZoneId, "hostedZoneId");
             this.hostedZone = HostedZone.fromHostedZoneAttributes(this, "HostedZone", HostedZoneAttributes.builder()
                     .zoneName(hostedZoneName)
-                    .hostedZoneId(builder.hostedZoneId)
+                    .hostedZoneId(hostedZoneId)
                     .build());
-            //hostedZoneName = this.hostedZone.getZoneName();
         } else {
-            //hostedZoneName = this.getConfigValue(builder.hostedZoneName, "hostedZoneName");
             this.hostedZone = HostedZone.Builder
                     .create(this, "HostedZone")
                     .zoneName(hostedZoneName)
