@@ -410,7 +410,7 @@ Public brand:
 - [x] CDK deploy
 - [x] Swap to use repository0 template.
 - [x] CI deployment
-- [~] Swap over to host live site from the CDK deployment by adding default environment 'ci' and the option of 'prod'.
+- [x] Swap over to host live site from the CDK deployment by adding default environment 'ci' and the option of 'prod'.
 - [~] Automated activity generation from showcased projects
 - [ ] Change AWS_CERTIFICATE_ID to ARN
 - [ ] Change AWS_HOSTED_ZONE_ID to ARN (if possible to look up by ARN)
