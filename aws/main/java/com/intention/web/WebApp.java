@@ -15,7 +15,7 @@ public class WebApp {
                 .hostedZoneId(System.getenv("HOSTED_ZONE_ID"))
                 .subDomainName(System.getenv("SUB_DOMAIN_NAME"))
                 .useExistingHostedZone(System.getenv("USE_EXISTING_HOSTED_ZONE"))
-                .certificateId(System.getenv("CERTIFICATE_ID"))
+                .certificateArn(System.getenv("CERTIFICATE_ARN"))
                 .useExistingCertificate(System.getenv("USE_EXISTING_CERTIFICATE"))
                 .cloudTrailEnabled(System.getenv("CLOUD_TRAIL_ENABLED"))
                 .cloudTrailLogGroupPrefix(System.getenv("CLOUD_TRAIL_LOG_GROUP_PREFIX"))

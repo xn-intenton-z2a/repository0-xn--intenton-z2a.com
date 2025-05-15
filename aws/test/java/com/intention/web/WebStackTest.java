@@ -34,7 +34,7 @@ public class WebStackTest {
                 .hostedZoneId("test")
                 .subDomainName("test")
                 .useExistingHostedZone("false")
-                .certificateId("test")
+                .certificateArn("test")
                 .useExistingCertificate("false")
                 .cloudTrailEnabled("true")
                 .cloudTrailLogGroupPrefix("/aws/s3/")

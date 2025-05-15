@@ -33,7 +33,6 @@ import software.amazon.awscdk.services.logs.RetentionDays;
 import software.amazon.awscdk.services.route53.ARecord;
 import software.amazon.awscdk.services.route53.AaaaRecord;
 import software.amazon.awscdk.services.route53.HostedZone;
-import software.amazon.awscdk.services.route53.HostedZoneAttributes;
 import software.amazon.awscdk.services.route53.IHostedZone;
 import software.amazon.awscdk.services.route53.RecordTarget;
 import software.amazon.awscdk.services.route53.targets.CloudFrontTarget;
@@ -84,7 +83,7 @@ public class WebStack extends Stack {
         public String hostedZoneId;
         public String subDomainName;
         public String useExistingHostedZone;
-        public String certificateId;
+        public String certificateArn;
         public String useExistingCertificate;
         public String cloudTrailEnabled;
         public String cloudTrailLogGroupPrefix;
@@ -140,8 +139,8 @@ public class WebStack extends Stack {
             return this;
         }
 
-        public Builder certificateId(String certificateId) {
-            this.certificateId = certificateId;
+        public Builder certificateArn(String certificateArn) {
+            this.certificateArn = certificateArn;
             return this;
         }
 
@@ -230,8 +229,6 @@ public class WebStack extends Stack {
             new AbstractMap.SimpleEntry<>(Pattern.compile("xn--intenton-z2a"), "intention")
     );
 
-    public String buildCertificateArn(final String id) { return "arn:aws:acm:us-east-1:%s:certificate/%s".formatted(this.getAccount(), id);}
-
     public WebStack(Construct scope, String id, WebStack.Builder builder) {
         this(scope, id, null, builder);
     }
@@ -239,28 +236,48 @@ public class WebStack extends Stack {
     public WebStack(Construct scope, String id, StackProps props, WebStack.Builder builder) {
         super(scope, id, props);
 
-        String env = this.getConfigValue(builder.env, "env");
-        String hostedZoneName = this.getConfigValue(builder.hostedZoneName, "hostedZoneName");
-        String hostedZoneId = this.getConfigValue(builder.hostedZoneId, "hostedZoneId");
-        String subDomainName = this.getConfigValue(builder.subDomainName, "subDomainName");
         boolean useExistingHostedZone = Boolean.parseBoolean(this.getConfigValue(builder.useExistingHostedZone, "useExistingHostedZone"));
-        String certificateId = this.getConfigValue(builder.certificateId, "certificateId");
-        boolean useExistingCertificate = Boolean.parseBoolean(this.getConfigValue(builder.useExistingCertificate, "useExistingCertificate"));
-        boolean cloudTrailEnabled = Boolean.parseBoolean(this.getConfigValue(builder.cloudTrailEnabled, "cloudTrailEnabled"));
-        String cloudTrailLogGroupPrefix = this.getConfigValue(builder.cloudTrailLogGroupPrefix, "cloudTrailLogGroupPrefix");
-        int cloudTrailLogGroupRetentionPeriodDays = Integer.parseInt(this.getConfigValue(builder.cloudTrailLogGroupRetentionPeriodDays, "cloudTrailLogGroupRetentionPeriodDays"));
-        int accessLogGroupRetentionPeriodDays = Integer.parseInt(this.getConfigValue(builder.accessLogGroupRetentionPeriodDays, "accessLogGroupRetentionPeriodDays"));
+        String hostedZoneName;
+        if (useExistingHostedZone) {
+            String hostedZoneId = this.getConfigValue(builder.hostedZoneId, "hostedZoneId");
+            this.hostedZone = HostedZone.fromHostedZoneId(this, "HostedZone", hostedZoneId);
+            //this.hostedZone = HostedZone.fromHostedZoneAttributes(this, "HostedZone", HostedZoneAttributes.builder()
+            //        .zoneName(hostedZoneName)
+            //        .build());
+            hostedZoneName = this.hostedZone.getZoneName();
+        } else {
+            hostedZoneName = this.getConfigValue(builder.hostedZoneName, "hostedZoneName");
+            this.hostedZone = HostedZone.Builder
+                    .create(this, "HostedZone")
+                    .zoneName(hostedZoneName)
+                    .build();
+        }
+
+        String env = this.getConfigValue(builder.env, "env");
+        String subDomainName = this.getConfigValue(builder.subDomainName, "subDomainName");
         this.domainName = Builder.buildDomainName(env, subDomainName, hostedZoneName);
         String dashedDomainName = Builder.buildDashedDomainName(env, subDomainName, hostedZoneName);
         String originBucketName = Builder.buildOriginBucketName(dashedDomainName);
+
         boolean s3UseExistingBucket = Boolean.parseBoolean(this.getConfigValue(builder.s3UseExistingBucket, "s3UseExistingBucket"));
         boolean s3RetainBucket = Boolean.parseBoolean(this.getConfigValue(builder.s3RetainBucket, "s3RetainBucket"));
+
         String cloudTrailEventSelectorPrefix = this.getConfigValue(builder.cloudTrailEventSelectorPrefix, "cloudTrailEventSelectorPrefix");
         String cloudTrailLogBucketName = Builder.buildCloudTrailLogBucketName(dashedDomainName);
+        boolean cloudTrailEnabled = Boolean.parseBoolean(this.getConfigValue(builder.cloudTrailEnabled, "cloudTrailEnabled"));
+        String cloudTrailLogGroupPrefix = this.getConfigValue(builder.cloudTrailLogGroupPrefix, "cloudTrailLogGroupPrefix");
+        int cloudTrailLogGroupRetentionPeriodDays = Integer.parseInt(this.getConfigValue(builder.cloudTrailLogGroupRetentionPeriodDays, "cloudTrailLogGroupRetentionPeriodDays"));
+
+        String certificateArn = this.getConfigValue(builder.certificateArn, "certificateArn");
+        boolean useExistingCertificate = Boolean.parseBoolean(this.getConfigValue(builder.useExistingCertificate, "useExistingCertificate"));
+
+        int accessLogGroupRetentionPeriodDays = Integer.parseInt(this.getConfigValue(builder.accessLogGroupRetentionPeriodDays, "accessLogGroupRetentionPeriodDays"));
         String originAccessLogBucketName = Builder.buildOriginAccessLogBucketName(dashedDomainName);
         String logS3ObjectEventHandlerSource = this.getConfigValue(builder.logS3ObjectEventHandlerSource, "logS3ObjectEventHandlerSource");
+
         String distributionAccessLogBucketName = Builder.buildDistributionAccessLogBucketName(dashedDomainName);
         String logGzippedS3ObjectEventHandlerSource = this.getConfigValue(builder.logGzippedS3ObjectEventHandlerSource, "logGzippedS3ObjectEventHandlerSource");
+
         String docRootPath = this.getConfigValue(builder.docRootPath, "docRootPath");
         String defaultDocumentAtOrigin = this.getConfigValue(builder.defaultDocumentAtOrigin, "defaultDocumentAtOrigin");
         String error404NotFoundAtDistribution = this.getConfigValue(builder.error404NotFoundAtDistribution, "error404NotFoundAtDistribution");
@@ -332,27 +349,13 @@ public class WebStack extends Stack {
                 .build();
 
         // Create a certificate for the website domain
-
-        if (useExistingHostedZone) {
-            this.hostedZone = HostedZone.fromHostedZoneAttributes(this, "HostedZone", HostedZoneAttributes.builder()
-                    .zoneName(hostedZoneName)
-                    .hostedZoneId(hostedZoneId)
-                    .build());
-        } else {
-            this.hostedZone = HostedZone.Builder
-                    .create(this, "HostedZone")
-                    .zoneName(hostedZoneName)
-                    .build();
-        }
-
         if (useExistingCertificate) {
-            var certificateArn = this.buildCertificateArn(certificateId);
             this.certificate = Certificate.fromCertificateArn(this, "Certificate", certificateArn);
         } else {
             this.certificate = Certificate.Builder
                     .create(this, "Certificate")
                     .domainName(this.domainName)
-                    .certificateName(certificateId)
+                    .certificateName(certificateArn)
                     .validation(CertificateValidation.fromDns(this.hostedZone))
                     .transparencyLoggingEnabled(true)
                     .build();

@@ -8,7 +8,7 @@
     "hostedZoneName": "xn--intenton-z2a.com",
     "hostedZoneId": "Z09934692CHZL2KPE9Q9F",
     "useExistingHostedZone": "true",
-    "certificateId": "73421403-bd8c-493c-888c-e3e08eec1c41",
+    "certificateArn": "arn:aws:acm:us-east-1:541134664601:certificate/73421403-bd8c-493c-888c-e3e08eec1c41",
     "useExistingCertificate": "true",
     "cloudTrailEnabled": "false",
     "cloudTrailLogGroupPrefix": "/aws/s3/",

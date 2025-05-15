@@ -14,7 +14,7 @@ and the [agentic-lib](https://github.com/xn-intenton-z2a/agentic-lib).
 | `CHATGPT_API_MODEL`       | The OpenAI API model to use.             | Repository   | String   | `o4-mini`                        |
 | `AWS_HOSTED_ZONE_ID`      | The AWS hosted zone ID for the domain.   | Repository   | String   | `Z01234-FAKE-012340000`          |
 | `AWS_HOSTED_ZONE_NAME`    | The AWS hosted zone name for the domain. | Repository   | String   | `my-fake-domaim.com`             |
-| `AWS_CERTIFICATE_ID`      | The AWS certificate ID for the domain.   | Environment  | String   | `01234-FAKE-012340000`           |
+| `AWS_CERTIFICATE_ARN`      | The AWS certificate ID for the domain.   | Environment  | String   | `01234-FAKE-012340000`           |
 | `AWS_CLOUD_TRAIL_ENABLED` | Enable CloudTrail logging.               | Environment  | Boolean  | `true`                           |
 
 # Deployment
@@ -339,7 +339,7 @@ WebStack.HostedZoneId = Z09934692CHZL2KPE9Q9F
 WebStack.OriginAccessLogBucketArn = arn:aws:s3:::dev-web-intention-com-origin-access-logs
 WebStack.OriginBucketArn = arn:aws:s3:::dev-web-intention-com
 WebStack.accessLogGroupRetentionPeriodDays = 30 (Source: CDK context.)
-WebStack.certificateId = 73421403-bd8c-493c-888c-e3e08eec1c41 (Source: CDK context.)
+WebStack.certificateArn = 73421403-bd8c-493c-888c-e3e08eec1c41 (Source: CDK context.)
 WebStack.cloudTrailEnabled = true (Source: CDK context.)
 WebStack.cloudTrailEventSelectorPrefix = none (Source: CDK context.)
 WebStack.cloudTrailLogGroupPrefix = /aws/s3/ (Source: CDK context.)
@@ -412,9 +412,8 @@ Public brand:
 - [x] CI deployment
 - [x] Swap over to host live site from the CDK deployment by adding default environment 'ci' and the option of 'prod'.
 - [x] Chat to interact with the projects
-- [ ] Change AWS_CERTIFICATE_ID to ARN
-- [ ] Change AWS_HOSTED_ZONE_ID to ARN (if possible to look up by ARN)
-- [ ] Read the primary domain from the AWS hosted zone (assuming we can look up by ARN)
+- [~] Change AWS_CERTIFICATE_ARN to ARN
+- [~] Read the primary domain from the AWS hosted zone (assuming we can look up by ARN)
 - [ ] Automated activity generation from showcased repositories
 - [ ] Showcase completed projects
 - [ ] Generate articles from the library - like feature generation - then use Markdown to HTML to generate the articles.
