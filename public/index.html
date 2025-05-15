@@ -17,6 +17,7 @@
             position: absolute; top: 0; left: 0; right: 0; bottom: 0;
             background-size: cover;
             animation: fadeInOut 10s infinite;
+            pointer-events: none; /* Allow mouse events to pass through to elements below */
         }
         .fogOne { background: url('vecteezy_white-fog-illustration_24065516-bottom-low.png') no-repeat center center; animation-duration: 3s; }
         .fogTwo { background: url('vecteezy_white-fog-illustration_24065530-bottom-risen.png') no-repeat center center; animation-duration: 4s; }
@@ -32,11 +33,31 @@
         #intention {
             color: #333;
             position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
+            top: 15%; 
+            /* left position will be set dynamically by JavaScript */
+            transform: translateY(-50%);
             font-size: 5vw;
             opacity: 0;
             transition: opacity 3s;
+        }
+
+        #giscus-container {
+            position: absolute;
+            width: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            top: 20px;
+            z-index: 1000;
+            /* Add padding to create space around the content */
+            padding: 0 5%;
+            box-sizing: border-box;
+        }
+
+        /* Apply 1/3 width only in landscape mode */
+        @media (orientation: landscape) {
+            #giscus-container {
+                width: 50%;
+            }
         }
     </style>
 </head>
@@ -51,28 +72,33 @@
 <div id="intention">intentïon</div>
 
 <!-- ─────────────── giscus embed ─────────────── -->
-<script src="https://giscus.app/client.js"
-        data-repo="xn-intenton-z2a/repository0"
-        data-repo-id="R_kgDON6E8ZA"
-        data-category="General"
-        data-category-id="DIC_kwDON6E8ZM4CpwzM"
-        data-mapping="specific"
-        data-term="Talk to the repository"
-        data-strict="0"
-        data-reactions-enabled="1"
-        data-emit-metadata="0"
-        data-input-position="bottom"
-        data-theme="light"
-        data-lang="en"
-        crossorigin="anonymous"
-        async>
-</script>
+<div id="giscus-container">
+    <script src="https://giscus.app/client.js"
+            data-repo="xn-intenton-z2a/repository0"
+            data-repo-id="R_kgDON6E8ZA"
+            data-category="General"
+            data-category-id="DIC_kwDON6E8ZM4CpwzM"
+            data-mapping="specific"
+            data-term="Talk to the repository"
+            data-strict="0"
+            data-reactions-enabled="1"
+            data-emit-metadata="0"
+            data-input-position="top"
+            data-theme="light"
+            data-lang="en"
+            crossorigin="anonymous"
+            async>
+    </script>
+</div>
 <!-- ────────────────────────────────────────────── -->
 
 <script>
     // show #intention (and let fog animate) on first mousemove
     document.body.addEventListener('mousemove', () => {
         const intent = document.getElementById('intention');
+        // Set random left position between 25% and 75%
+        const randomLeft = Math.floor(Math.random() * (75 - 25 + 1)) + 25;
+        intent.style.left = `${randomLeft}%`;
         intent.style.opacity = 1;
         setTimeout(() => intent.style.opacity = 0, 3000);
     }, { once: true });
