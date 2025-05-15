@@ -60,7 +60,7 @@
             left: 50%;
             transform: translateX(-50%);
             top: 20px;
-            z-index: 1000;
+            z-index: -1000;
             /* Add padding to create space around the content */
             padding: 0 5%;
             box-sizing: border-box;
@@ -86,7 +86,7 @@
 <div id="intention">intentïon</div>
 
 <!-- ─────────────── giscus embed ─────────────── -->
-<div id="giscus-container">
+<!--div id="giscus-container">
     <script src="https://giscus.app/client.js"
             data-repo="xn-intenton-z2a/repository0"
             data-repo-id="R_kgDON6E8ZA"
@@ -103,73 +103,72 @@
             crossorigin="anonymous"
             async>
     </script>
-</div>
+</div-->
 <!-- ────────────────────────────────────────────── -->
 
 <script>
-    // Function to show intention with random position
+    // Function to show intention with a random position
     let isIntentionVisible = false;
     let intentionTimeout;
-    let isWhatVisible = false;
-    let whatTimeout;
+    //let isWhatVisible = false;
+    //let whatTimeout;
 
-    function showWhat() {
-        // Don't trigger if intention is already visible
-        if (isWhatVisible) return;
+    //function showWhat() {
+    //    // Don't trigger if the "what" div is already visible
+    //    if (isWhatVisible) return;
 
-        const what = document.getElementById('what');
-        // Set random left position between 25% and 75%
-        const randomLeft = Math.floor(Math.random() * (75 - 25 + 1)) + 25;
-        what.style.left = `${randomLeft}%`;
-        what.style.opacity = 1;
-        // set text contents to "What is your"
-        //what.textContent = "What is your";
-        isWhatVisible = true;
+    //    const what = document.getElementById('what');
+    //    // Set a random left position between 25% and 75%
+    //    const randomLeft = Math.floor(Math.random() * (75 - 25 + 1)) + 25;
+    //    what.style.left = `${randomLeft}%`;
+    //    what.style.opacity = '1';
+    //    //what.textContent = "What is your";
+    //    isWhatVisible = true;
 
-        // Clear any existing timeout
-        if (whatTimeout) clearTimeout(whatTimeout);
+    //    // Clear any existing timeout
+    //    if (whatTimeout) clearTimeout(whatTimeout);
 
-        // Hide what after 3 seconds
-        whatTimeout = setTimeout(() => {
-            what.style.opacity = 0;
-            isWhatVisible = false;
-        }, 750);
-    }
+    //    // Hide what after 3 seconds
+    //    whatTimeout = setTimeout(() => {
+    //        what.style.opacity = '0';
+    //        isWhatVisible = false;
+    //    }, 750);
+    //}
 
     function showIntention() {
-        // Don't trigger if intention is already visible
+        // Don't trigger if the "intention" div is already visible
         if (isIntentionVisible) return;
 
-        // Set flag immediately to prevent multiple triggers during delay
+        // Set a flag immediately to prevent multiple triggers during delay
         isIntentionVisible = true;
 
         const intention = document.getElementById('intention');
-        // Set random left position between 25% and 75%
+        // Set a random left position between 25% and 75%
         const randomLeft = Math.floor(Math.random() * (75 - 25 + 1)) + 25;
         intention.style.left = `${randomLeft}%`;
 
         // Clear any existing timeout
         if (intentionTimeout) clearTimeout(intentionTimeout);
 
-        // Add 1 second delay before showing the intention
-        intentionTimeout = setTimeout(() => {
-            intention.style.opacity = 1;
+        // Add a delay of 1 second before showing the intention
+        //intentionTimeout = setTimeout(() => {
+            intention.style.opacity = '1';
 
             // Hide intention after 3 seconds
             intentionTimeout = setTimeout(() => {
-                intention.style.opacity = 0;
+                intention.style.opacity = '0';
                 isIntentionVisible = false;
             }, 3000);
-        }, 1000);
+        //}, 1000);
     }
 
     // Show intention on mousemove (works on every mousemove)
     document.body.addEventListener('mousemove', showIntention);
-    document.body.addEventListener('mousemove', showWhat);
+    //document.body.addEventListener('mousemove', showWhat);
 
     // Also show intention on click/tap for touch devices
     document.body.addEventListener('click', showIntention);
-    document.body.addEventListener('click', showWhat);
+    //document.body.addEventListener('click', showWhat);
 </script>
 
 </body>
