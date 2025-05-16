@@ -68,7 +68,7 @@ and the <a href="https://github.com/xn-intenton-z2a/repository0-xn--intenton-z2a
 <td class="md-github"><code class="md-github">my-fake-domaim.com</code></td>
 </tr>
 <tr class="md-github">
-<td class="md-github"><code class="md-github">AWS_CERTIFICATE_ID</code></td>
+<td class="md-github"><code class="md-github">AWS_CERTIFICATE_ARN</code></td>
 <td class="md-github">The AWS certificate ID for the domain.</td>
 <td class="md-github">Environment</td>
 <td class="md-github">String</td>
@@ -348,7 +348,7 @@ WebStack.HostedZoneId = Z09934692CHZL2KPE9Q9F
 WebStack.OriginAccessLogBucketArn = arn:aws:s3:::dev-web-intention-com-origin-access-logs
 WebStack.OriginBucketArn = arn:aws:s3:::dev-web-intention-com
 WebStack.accessLogGroupRetentionPeriodDays = 30 (Source: CDK context.)
-WebStack.certificateId = 73421403-bd8c-493c-888c-e3e08eec1c41 (Source: CDK context.)
+WebStack.certificateArn = 73421403-bd8c-493c-888c-e3e08eec1c41 (Source: CDK context.)
 WebStack.cloudTrailEnabled = true (Source: CDK context.)
 WebStack.cloudTrailEventSelectorPrefix = none (Source: CDK context.)
 WebStack.cloudTrailLogGroupPrefix = /aws/s3/ (Source: CDK context.)
@@ -412,19 +412,16 @@ and any libraries you pull in would be links.
 <li class="md-github md-github__task-item"><input type="checkbox" disabled="true" class="md-github__task-checkbox" checked="true"> Swap to use repository0 template.</li>
 <li class="md-github md-github__task-item"><input type="checkbox" disabled="true" class="md-github__task-checkbox" checked="true"> CI deployment</li>
 <li class="md-github md-github__task-item"><input type="checkbox" disabled="true" class="md-github__task-checkbox" checked="true"> Swap over to host live site from the CDK deployment by adding default environment 'ci' and the option of 'prod'.</li>
-<li class="md-github">[~] Automated activity generation from showcased projects</li>
-<li class="md-github md-github__task-item"><input type="checkbox" disabled="true" class="md-github__task-checkbox"> Change AWS_CERTIFICATE_ID to ARN</li>
-<li class="md-github md-github__task-item"><input type="checkbox" disabled="true" class="md-github__task-checkbox"> Change AWS_HOSTED_ZONE_ID to ARN (if possible to look up by ARN)</li>
-<li class="md-github md-github__task-item"><input type="checkbox" disabled="true" class="md-github__task-checkbox"> Read the primary domain from the AWS hosted zone (assuming we can look up by ARN)</li>
-<li class="md-github md-github__task-item"><input type="checkbox" disabled="true" class="md-github__task-checkbox"> Chat to interact with the projects</li>
-<li class="md-github md-github__task-item"><input type="checkbox" disabled="true" class="md-github__task-checkbox"> Showcase links</li>
+<li class="md-github md-github__task-item"><input type="checkbox" disabled="true" class="md-github__task-checkbox" checked="true"> Chat to interact with the projects</li>
+<li class="md-github md-github__task-item"><input type="checkbox" disabled="true" class="md-github__task-checkbox" checked="true"> Change AWS_CERTIFICATE_ARN to ARN</li>
+<li class="md-github md-github__task-item"><input type="checkbox" disabled="true" class="md-github__task-checkbox"> Automated activity generation from showcased repositories</li>
+<li class="md-github md-github__task-item"><input type="checkbox" disabled="true" class="md-github__task-checkbox"> Showcase completed projects</li>
+<li class="md-github md-github__task-item"><input type="checkbox" disabled="true" class="md-github__task-checkbox"> Generate articles from the library - like feature generation - then use Markdown to HTML to generate the articles.</li>
+<li class="md-github md-github__task-item"><input type="checkbox" disabled="true" class="md-github__task-checkbox"> Announce articles on socials</li>
 <li class="md-github md-github__task-item"><input type="checkbox" disabled="true" class="md-github__task-checkbox"> Automated feed generation</li>
+<li class="md-github md-github__task-item"><input type="checkbox" disabled="true" class="md-github__task-checkbox"> Publish feed generations to socials</li>
 <li class="md-github md-github__task-item"><input type="checkbox" disabled="true" class="md-github__task-checkbox"> Add contact bots for socials</li>
 <li class="md-github md-github__task-item"><input type="checkbox" disabled="true" class="md-github__task-checkbox"> Add contact bots via Slack / Discord or Redit</li>
-<li class="md-github md-github__task-item"><input type="checkbox" disabled="true" class="md-github__task-checkbox"> Register: intentiion.com, intentionai.com, intentiionai.com, intentiionaii.com</li>
-<li class="md-github md-github__task-item"><input type="checkbox" disabled="true" class="md-github__task-checkbox"> Brand ownership</li>
-<li class="md-github md-github__task-item"><input type="checkbox" disabled="true" class="md-github__task-checkbox"> Brand protection</li>
-<li class="md-github md-github__task-item"><input type="checkbox" disabled="true" class="md-github__task-checkbox"> Web analytics</li>
 <li class="md-github md-github__task-item"><input type="checkbox" disabled="true" class="md-github__task-checkbox"> Link to Linktree</li>
 <li class="md-github md-github__task-item"><input type="checkbox" disabled="true" class="md-github__task-checkbox"> Audience Dashboard</li>
 </ul>
@@ -459,7 +456,7 @@ IMPORTANT: Any derived work must include the following attribution:
 
   </section>
   <footer>
-    <p>Generated on 2025-05-15T10:39:23.553Z</p>
+    <p>Generated on 2025-05-16T10:38:40.424Z</p>
   </footer>
 </body>
 </html>
