@@ -413,7 +413,7 @@ Public brand:
 - [x] Swap over to host live site from the CDK deployment by adding default environment 'ci' and the option of 'prod'.
 - [x] Chat to interact with the projects
 - [x] Change AWS_CERTIFICATE_ARN to ARN
-- [ ] Automated activity generation from showcased repositories
+- [~] Automated activity generation from showcased repositories
 - [ ] Showcase completed projects
 - [ ] Generate articles from the library - like feature generation - then use Markdown to HTML to generate the articles.
 - [ ] Announce articles on socials

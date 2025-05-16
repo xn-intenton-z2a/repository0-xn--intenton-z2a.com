@@ -70,6 +70,19 @@
             z-index: 10;
         }
 
+        #random-line {
+            color: #333;
+            position: absolute;
+            font-size: 4vw;
+            opacity: 0;
+            transition: opacity 3s;
+            pointer-events: none;
+            z-index: 500; /* Behind giscus-container (z-index: 1000) */
+            text-align: center;
+            width: 80%;
+            left: 10%;
+        }
+
         #giscus-container {
             position: absolute;
             width: 100%;
@@ -103,6 +116,8 @@
 
 <div id="running">The running experiment branch URL will be here.</div>
 
+<div id="random-line"></div>
+
 <!-- ─────────────── giscus embed ─────────────── -->
 <div id="giscus-container">
     <script src="https://giscus.app/client.js"
@@ -132,6 +147,13 @@
     let intentionTimeout;
     let isWhatVisible = false;
     let whatTimeout;
+
+    // Variables for random lines from intentïon.md
+    let intentionLines = [];
+    let isRandomLineVisible = false;
+    let randomLineTimeout;
+    let randomLineFadeDuration = 3000; // 3 seconds for fade in/out
+    let randomLinePauseDuration = 5000; // 5 seconds between lines
 
     function showWhat() {
         // Don't trigger if the "what" div is already visible
@@ -249,6 +271,43 @@
         showIntention();
     }, 1000);
 
+    // Function to show a random line from intentïon.md
+    function showRandomLine() {
+        // Don't proceed if there are no lines or if a line is already visible
+        if (intentionLines.length === 0 || isRandomLineVisible) return;
+
+        // Set flag to prevent multiple triggers
+        isRandomLineVisible = true;
+
+        const randomLineDiv = document.getElementById('random-line');
+
+        // Select a random line from intentionLines
+        const randomIndex = Math.floor(Math.random() * intentionLines.length);
+        const randomLine = intentionLines[randomIndex];
+
+        // Set random vertical position between 20% and 80%
+        const randomTop = Math.floor(Math.random() * (80 - 20 + 1)) + 20;
+        randomLineDiv.style.top = `${randomTop}%`;
+
+        // Clear any existing timeout
+        if (randomLineTimeout) clearTimeout(randomLineTimeout);
+
+        // Show the random line
+        randomLineDiv.textContent = randomLine;
+        randomLineDiv.style.opacity = '1';
+
+        // Hide the random line after the fade duration
+        randomLineTimeout = setTimeout(() => {
+            randomLineDiv.style.opacity = '0';
+
+            // Reset flag and schedule next line after pause duration
+            randomLineTimeout = setTimeout(() => {
+                isRandomLineVisible = false;
+                showRandomLine(); // Show next random line
+            }, randomLinePauseDuration);
+        }, randomLineFadeDuration);
+    }
+
     // Function to poll the intention URL and update the running div
     function pollIntentionUrl() {
         const intentionUrl = 'https://raw.githubusercontent.com/xn-intenton-z2a/repository0/main/intentïon.md';
@@ -265,6 +324,15 @@
             .then(content => {
                 // Split the content into lines
                 const lines = content.split('\n');
+
+                // Store all non-empty lines for random display
+                intentionLines = lines.filter(line => line.trim() !== '');
+                console.log(`Stored ${intentionLines.length} lines from intentïon.md`);
+
+                // Start showing random lines if not already started
+                if (!isRandomLineVisible) {
+                    showRandomLine();
+                }
 
                 // Filter to lines matching GitHub branch URLs using the same pattern as in agent-archive-intentïon.yml
                 //const branchUrlPattern = /^\s*https:\/\/github\.com\/[^\/\s]+\/[^\/\s]+\/(tree|blob|edit|new|upload|commits)\/[^\s]+|https:\/\/github\.com\/[^\/\s]+\/[^\/\s]+\/compare\/[^.\/]+\.{3}[^\/\s]+/;
@@ -300,7 +368,7 @@
 
     // Poll the intention URL immediately and then every minute
     pollIntentionUrl();
-    setInterval(pollIntentionUrl, 2000); // 60000 ms = 1 minute
+    setInterval(pollIntentionUrl, 60000); // 60000 ms = 1 minute
 </script>
 
 </body>
