@@ -248,6 +248,59 @@
         showWhat();
         showIntention();
     }, 1000);
+
+    // Function to poll the intention URL and update the running div
+    function pollIntentionUrl() {
+        const intentionUrl = 'https://raw.githubusercontent.com/xn-intenton-z2a/repository0/main/intentïon.md';
+        const runningDiv = document.getElementById('running');
+
+        // Fetch the intention file
+        fetch(intentionUrl)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.text();
+            })
+            .then(content => {
+                // Split the content into lines
+                const lines = content.split('\n');
+
+                // Filter to lines matching GitHub branch URLs using the same pattern as in agent-archive-intentïon.yml
+                //const branchUrlPattern = /^\s*https:\/\/github\.com\/[^\/\s]+\/[^\/\s]+\/(tree|blob|edit|new|upload|commits)\/[^\s]+|https:\/\/github\.com\/[^\/\s]+\/[^\/\s]+\/compare\/[^.\/]+\.{3}[^\/\s]+/;
+                const branchUrlPattern = /^.*https:\/\/.*\/tree\/.*$/
+                const branchUrlLines = lines.filter(line => branchUrlPattern.test(line));
+
+                if (branchUrlLines.length === 0) {
+                    console.log('No matching GitHub branch URL found in intentïon.md');
+                    runningDiv.textContent = 'No current experiment branch found.';
+                } else {
+                    // Get the last matching line
+                    const lastUrlLine = branchUrlLines[branchUrlLines.length - 1];
+
+                    // Extract URL by ignoring anything before the first https:// and up to the first non-url character
+                    const urlMatch = lastUrlLine.match(/https:\/\/[^ ]+/);
+                    if (urlMatch) {
+                        const branchUrl = urlMatch[0];
+                        console.log(`Found branch URL: ${branchUrl}`);
+
+                        // Update the running div with a clickable link
+                        runningDiv.innerHTML = `Current experiment branch: <a href="${branchUrl}" target="_blank" style="color: #333; text-decoration: underline; pointer-events: auto;">${branchUrl}</a>`;
+                    } else {
+                        console.log(`No matching GitHub branch URL found in line: ${lastUrlLine}`);
+                        runningDiv.textContent = 'No current experiment branch found.';
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching intention file:', error);
+                runningDiv.textContent = 'Error fetching current experiment branch.';
+            });
+    }
+
+    // Poll the intention URL immediately and then every minute
+    pollIntentionUrl();
+    setInterval(pollIntentionUrl, 2000); // 60000 ms = 1 minute
 </script>
 
 </body>
