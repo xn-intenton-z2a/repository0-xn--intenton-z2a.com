@@ -58,6 +58,18 @@
             z-index: 10;
         }
 
+        #running {
+            color: #333;
+            position: absolute;
+            bottom: 5%;
+            /*transform: translateY(-50%);*/
+            font-size: 5vw;
+            opacity: 1;
+            /*transition: opacity 3s;*/
+            pointer-events: none;
+            z-index: 10;
+        }
+
         #giscus-container {
             position: absolute;
             width: 100%;
@@ -87,8 +99,9 @@
 <div class="fogFour"></div>
 <div class="fogFive"></div>
 
-<div id="what">What is your</div>
-<div id="intention">intentïon</div>
+<div id="what">What is your</div><div id="intention">intentïon</div>
+
+<div id="running">The running experiment branch URL will be here.</div>
 
 <!-- ─────────────── giscus embed ─────────────── -->
 <div id="giscus-container">
