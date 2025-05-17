@@ -317,6 +317,7 @@
 
             if (linkElement) {
                 experimentLink.href = linkElement.href;
+                experimentLink.target = "_blank"; // Add target="_blank" to open in new tab like the stand-alone link
                 experimentLink.textContent = 'Current Experiment: ' + linkElement.textContent.substring(0, 30) + '...';
             } else {
                 experimentLink.textContent = 'No current experiment';
@@ -343,6 +344,14 @@
         if (aboutBoxVisible) {
             document.getElementById('about-box').style.display = 'none';
             aboutBoxVisible = false;
+        }
+    }
+
+    // Hide menu items when clicking anywhere
+    function hideMenuItems() {
+        if (menuItemsVisible) {
+            document.getElementById('menu-items').style.display = 'none';
+            menuItemsVisible = false;
         }
     }
 
@@ -430,13 +439,19 @@
             toggleAboutBox();
         });
 
-        // Document click handler to hide about box
+        // Document click handler to hide about box and menu items
         document.addEventListener('click', function(e) {
             hideAboutBox();
+            hideMenuItems();
         });
 
         // Prevent clicks inside about box from closing it
         document.getElementById('about-box').addEventListener('click', function(e) {
+            e.stopPropagation(); // Prevent document click from firing
+        });
+
+        // Prevent clicks inside menu items from closing it
+        document.getElementById('menu-items').addEventListener('click', function(e) {
             e.stopPropagation(); // Prevent document click from firing
         });
     });
