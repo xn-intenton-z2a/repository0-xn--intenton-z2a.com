@@ -414,7 +414,8 @@ Public brand:
 - [x] Chat to interact with the projects
 - [x] Change AWS_CERTIFICATE_ARN to ARN
 - [~] Automated activity generation from showcased repositories
-- [ ] Showcase completed projects
+- [ ] Create websites from archived branches and add these to ./public/ to showcase the projects.
+- [ ] Showcase completed projects, back off to something achievable and that's where I am.
 - [ ] Generate articles from the library - like feature generation - then use Markdown to HTML to generate the articles.
 - [ ] Announce articles on socials
 - [ ] Automated feed generation
