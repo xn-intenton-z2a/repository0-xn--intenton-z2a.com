@@ -35,6 +35,17 @@
             50%     { opacity: 1; }
         }
 
+        #menu {
+            color: #333;
+            position: absolute;
+            left: 5%;
+            top: 5%;
+            transform: translateY(-50%);
+            font-size: 5vw;
+            opacity: 0;
+            transition: opacity 3s;
+        }
+
         #what {
             color: #333;
             position: absolute;
@@ -106,6 +117,8 @@
 </head>
 <body>
 
+<div id="menu">Menu</div>
+
 <div class="fogOne"></div>
 <div class="fogTwo"></div>
 <div class="fogThree"></div>
@@ -143,10 +156,12 @@
     console.log('Script started executing');
 
     // Function to show intention with a random position
-    let isIntentionVisible = false;
-    let intentionTimeout;
+    let isMenuVisible = false;
+    let menuTimeout;
     let isWhatVisible = false;
     let whatTimeout;
+    let isIntentionVisible = false;
+    let intentionTimeout;
 
     // Variables for random lines from intentïon.md
     let intentionLines = [];
@@ -154,6 +169,27 @@
     let randomLineTimeout;
     let randomLineFadeDuration = 3000; // 3 seconds for fade in/out
     let randomLinePauseDuration = 5000; // 5 seconds between lines
+
+    function showMenu() {
+        // Don't trigger if the "what" div is already visible
+        //if (isMenuVisible) return;
+
+        const menu = document.getElementById('menu');
+        // Set a random left position between 25% and 75%
+        //const randomLeft = Math.floor(Math.random() * (75 - 25 + 1)) + 25;
+        //menu.style.left = `${randomLeft}%`;
+        menu.style.opacity = '1';
+        isMenuVisible = true;
+
+        // Clear any existing timeout
+        if (menuTimeout) clearTimeout(menuTimeout);
+
+        // Hide what after 10 seconds
+        menuTimeout = setTimeout(() => {
+            menu.style.opacity = '0';
+            isMenuVisible = false;
+        }, 10000);
+    }
 
     function showWhat() {
         // Don't trigger if the "what" div is already visible
@@ -170,7 +206,7 @@
         // Clear any existing timeout
         if (whatTimeout) clearTimeout(whatTimeout);
 
-        // Hide what after 3 seconds
+        // Hide what after 0.75 seconds
         whatTimeout = setTimeout(() => {
             what.style.opacity = '0';
             isWhatVisible = false;
@@ -214,62 +250,57 @@
     }
 
     // Show intention on mousemove (works on every mousemove)
-    console.log('Adding event listeners');
+    //console.log('Adding event listeners');
 
     // Make sure DOM is fully loaded before adding event listeners
     document.addEventListener('DOMContentLoaded', function() {
         console.log('DOM fully loaded');
         document.body.addEventListener('mousemove', function(e) {
             console.log('mousemove event triggered');
-            showWhat();
-            showIntention();
+            showMenu();
         });
 
         // Also show intention on click/tap for touch devices
         document.body.addEventListener('click', function(e) {
             console.log('click event triggered');
-            showWhat();
-            showIntention();
+            showMenu();
         });
     });
 
     // Add event listeners immediately as well (in case DOMContentLoaded already fired)
     document.body.addEventListener('mousemove', function(e) {
         console.log('mousemove event triggered on body (immediate)');
-        showWhat();
-        showIntention();
+        showMenu();
     });
 
     document.body.addEventListener('click', function(e) {
         console.log('click event triggered on body (immediate)');
-        showWhat();
-        showIntention();
+        showMenu();
     });
 
     // Add event listeners to the document itself
     document.addEventListener('mousemove', function(e) {
         console.log('mousemove event triggered on document');
-        showWhat();
-        showIntention();
+        showMenu();
     });
 
     document.addEventListener('click', function(e) {
         console.log('click event triggered on document');
-        showWhat();
-        showIntention();
+        showMenu();
     });
 
 
-    //document.body.addEventListener('mousemove', showWhat);
-    //document.body.addEventListener('click', showWhat);
+    document.body.addEventListener('mousemove', showMenu);
+    document.body.addEventListener('click', showMenu);
 
     // Call showIntention directly after a short delay to test if it works
     console.log('Setting timeout to call showIntention directly');
     setTimeout(function() {
         console.log('Calling showIntention directly');
+        showMenu();
         showWhat();
         showIntention();
-    }, 1000);
+    }, 5000);
 
     // Function to show a random line from intentïon.md
     function showRandomLine() {
