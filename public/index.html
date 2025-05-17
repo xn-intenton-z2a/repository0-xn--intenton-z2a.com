@@ -36,14 +36,77 @@
         }
 
         #menu {
-            color: #333;
             position: absolute;
-            left: 5%;
-            top: 5%;
-            transform: translateY(-50%);
-            font-size: 5vw;
+            left: 2%;
+            top: 1%;
             opacity: 0;
             transition: opacity 3s;
+            cursor: pointer;
+            z-index: 100;
+            width: 15vw; /* 25% of viewport width */
+            height: 15vw; /* Make it a square */
+            /*border: 2px solid transparent;*/
+            border-radius: 5px;
+            padding: 5px;
+            transition: opacity 3s; /* , border-color 0.3s */
+        }
+
+        /*#menu:hover {
+            border-color: #3F5965;
+        }*/
+
+        #menu img {
+            position: absolute;
+            top: -35%;
+            left: -20%;
+            width: calc(25vw - 10px); /* Account for padding */
+            height: calc(25vw - 10px); /* Match container height minus padding */
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+            object-fit: contain; /* Ensure the image maintains its aspect ratio */
+        }
+
+        #menu-items {
+            position: absolute;
+            left: 5%;
+            top: calc(5px + 15vw + 10px); /* Position below the menu (menu top position + menu height + padding) */
+            background-color: rgba(255, 255, 255, 0.5);
+            border: 2px solid #3F5965;
+            border-radius: 5px;
+            padding: 10px;
+            display: none;
+            z-index: 2000;
+        }
+
+        #menu-items a {
+            display: block;
+            color: #333;
+            text-decoration: none;
+            margin: 10px 0;
+            padding: 5px;
+            z-index: 2001;
+            border: 1px solid transparent;
+            transition: border-color 0.3s;
+        }
+
+        #menu-items a:hover {
+            border-color: #3F5965;
+        }
+
+        #about-box {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(255, 255, 255, 0.9);
+            border: 2px solid #3F5965;
+            border-radius: 5px;
+            padding: 20px;
+            max-width: 80%;
+            max-height: 80%;
+            overflow-y: auto;
+            z-index: 3000;
+            display: none;
         }
 
         #what {
@@ -117,7 +180,22 @@
 </head>
 <body>
 
-<div id="menu">Menu</div>
+<div id="menu">
+    <img src="brand/mesh/intention-mesh-transparent-steel.png" alt="Intention Mesh Steel" id="menu-img-1">
+    <img src="brand/mesh/intention-mesh-transparent-white.png" alt="Intention Mesh White" id="menu-img-2">
+</div>
+
+<div id="menu-items">
+    <a href="#" id="experiment-link">Current Experiment</a>
+    <a href="#" id="about-link">About intentïon</a>
+</div>
+
+<div id="about-box">
+    <h2>intentïon</h2>
+    <p>intentïon.com showcases experiments from <a href="https://github.com/xn-intenton-z2a/repository0" target="_blank">repository0</a>
+    using the <a href="https://github.com/xn-intenton-z2a/agentic-lib" target="_blank">agentic-lib</a> workflows.</p>
+    <p>This website's repository is licensed under the GNU General Public License (GPL).</p>
+</div>
 
 <div class="fogOne"></div>
 <div class="fogTwo"></div>
@@ -162,6 +240,10 @@
     let whatTimeout;
     let isIntentionVisible = false;
     let intentionTimeout;
+    let currentImageIndex = 0;
+    let imageInterval;
+    let menuItemsVisible = false;
+    let aboutBoxVisible = false;
 
     // Variables for random lines from intentïon.md
     let intentionLines = [];
@@ -170,25 +252,98 @@
     let randomLineFadeDuration = 3000; // 3 seconds for fade in/out
     let randomLinePauseDuration = 5000; // 5 seconds between lines
 
-    function showMenu() {
-        // Don't trigger if the "what" div is already visible
-        //if (isMenuVisible) return;
+    // Function to cycle through menu images
+    function cycleMenuImages() {
+        const images = [
+            document.getElementById('menu-img-1'),
+            document.getElementById('menu-img-2'),
+        ];
 
+        // Hide all images
+        images.forEach(img => img.style.opacity = '0');
+
+        // Show current image
+        currentImageIndex = (currentImageIndex + 1) % images.length;
+        images[currentImageIndex].style.opacity = '1';
+
+        // Set the next timeout based on which image is currently showing
+        if (imageInterval) clearTimeout(imageInterval);
+
+        // menu-img-1 (index 0) shows for 0.9s, menu-img-2 (index 1) shows for 0.1s
+        const nextDelay = currentImageIndex === 0 ? 1500 : 50;
+        imageInterval = setTimeout(cycleMenuImages, nextDelay);
+    }
+
+    function showMenu() {
         const menu = document.getElementById('menu');
-        // Set a random left position between 25% and 75%
-        //const randomLeft = Math.floor(Math.random() * (75 - 25 + 1)) + 25;
-        //menu.style.left = `${randomLeft}%`;
         menu.style.opacity = '1';
         isMenuVisible = true;
 
         // Clear any existing timeout
         if (menuTimeout) clearTimeout(menuTimeout);
+        if (imageInterval) clearTimeout(imageInterval);
 
-        // Hide what after 10 seconds
+        // Start cycling images
+        cycleMenuImages();
+
+        // Hide menu after 10 seconds
         menuTimeout = setTimeout(() => {
             menu.style.opacity = '0';
             isMenuVisible = false;
+            if (imageInterval) clearTimeout(imageInterval);
+
+            // Also hide menu items if they're visible
+            if (menuItemsVisible) {
+                toggleMenuItems();
+            }
         }, 10000);
+    }
+
+    // Function to toggle menu items visibility
+    function toggleMenuItems() {
+        const menuItems = document.getElementById('menu-items');
+
+        if (menuItemsVisible) {
+            menuItems.style.display = 'none';
+            menuItemsVisible = false;
+        } else {
+            menuItems.style.display = 'block';
+            menuItemsVisible = true;
+
+            // Update experiment link
+            const experimentLink = document.getElementById('experiment-link');
+            const runningDiv = document.getElementById('running');
+            const linkElement = runningDiv.querySelector('a');
+
+            if (linkElement) {
+                experimentLink.href = linkElement.href;
+                experimentLink.textContent = 'Current Experiment: ' + linkElement.textContent.substring(0, 30) + '...';
+            } else {
+                experimentLink.textContent = 'No current experiment';
+                experimentLink.href = '#';
+            }
+        }
+    }
+
+    // Function to show/hide about box
+    function toggleAboutBox() {
+        const aboutBox = document.getElementById('about-box');
+
+        if (aboutBoxVisible) {
+            aboutBox.style.display = 'none';
+            aboutBoxVisible = false;
+        } else {
+            aboutBox.style.display = 'block';
+            aboutBoxVisible = true;
+        }
+    }
+
+    // Hide about box when clicking anywhere
+    function hideAboutBox() {
+        if (aboutBoxVisible) {
+            document.getElementById('about-box').style.display = 'none';
+            aboutBoxVisible = false;
+        }
     }
 
     function showWhat() {
@@ -255,15 +410,34 @@
     // Make sure DOM is fully loaded before adding event listeners
     document.addEventListener('DOMContentLoaded', function() {
         console.log('DOM fully loaded');
+
+        // Show menu on mousemove
         document.body.addEventListener('mousemove', function(e) {
             console.log('mousemove event triggered');
             showMenu();
         });
 
-        // Also show intention on click/tap for touch devices
-        document.body.addEventListener('click', function(e) {
-            console.log('click event triggered');
-            showMenu();
+        // Menu click handler
+        document.getElementById('menu').addEventListener('click', function(e) {
+            e.stopPropagation(); // Prevent document click from firing
+            toggleMenuItems();
+        });
+
+        // About link click handler
+        document.getElementById('about-link').addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation(); // Prevent document click from firing
+            toggleAboutBox();
+        });
+
+        // Document click handler to hide about box
+        document.addEventListener('click', function(e) {
+            hideAboutBox();
+        });
+
+        // Prevent clicks inside about box from closing it
+        document.getElementById('about-box').addEventListener('click', function(e) {
+            e.stopPropagation(); // Prevent document click from firing
         });
     });
 
@@ -273,25 +447,17 @@
         showMenu();
     });
 
-    document.body.addEventListener('click', function(e) {
-        console.log('click event triggered on body (immediate)');
-        showMenu();
+    // Initialize menu images on page load
+    window.addEventListener('load', function() {
+        // Show first image
+        document.getElementById('menu-img-1').style.opacity = '1';
+        currentImageIndex = 0;
+
+        // Start cycling images when menu is visible
+        if (isMenuVisible) {
+            cycleMenuImages();
+        }
     });
-
-    // Add event listeners to the document itself
-    document.addEventListener('mousemove', function(e) {
-        console.log('mousemove event triggered on document');
-        showMenu();
-    });
-
-    document.addEventListener('click', function(e) {
-        console.log('click event triggered on document');
-        showMenu();
-    });
-
-
-    document.body.addEventListener('mousemove', showMenu);
-    document.body.addEventListener('click', showMenu);
 
     // Call showIntention directly after a short delay to test if it works
     console.log('Setting timeout to call showIntention directly');
