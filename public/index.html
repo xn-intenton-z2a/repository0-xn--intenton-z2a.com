@@ -89,6 +89,17 @@
             transition: border-color 0.3s;
         }
 
+        /* Default browser styling for experiment link */
+        /*#experiment-link {
+            color: blue;
+            text-decoration: underline;
+        }*/
+
+        /* Allow default browser behavior for visited links */
+        /*#experiment-link:visited {
+            color: purple;
+        }*/
+
         #menu-items a:hover {
             border-color: #3F5965;
         }
@@ -137,8 +148,8 @@
             position: absolute;
             bottom: 5%;
             /*transform: translateY(-50%);*/
-            font-size: 3vw;
-            opacity: 1;
+            font-size: 2.2vw;
+            opacity: 0.5;
             /*transition: opacity 3s;*/
             pointer-events: none;
             z-index: 10;
@@ -165,6 +176,7 @@
             width: 75vw; /* 2/3 of viewport width */
             height: calc(66.67vw * 9 / 16); /* 16:9 aspect ratio */
             background-color: #000;
+            opacity: 0.4;
             border: 2px solid #00FF00;
             border-radius: 5px;
             padding: 10px;
@@ -203,7 +215,7 @@
             transform: translateX(-50%);
             top: 20%;
             z-index: 1000;
-            opacity: 0.75;
+            opacity: 0.9;
             padding: 2% 2%;
             box-sizing: border-box;
             max-height: 66.66vh;
@@ -225,7 +237,7 @@
 </div>
 
 <div id="menu-items">
-    <a href="#" id="experiment-link">Current Experiment</a>
+    <a href="#" id="experiment-link">Experiments</a>
     <a href="#" id="about-link">About intentïon</a>
 </div>
 
@@ -244,7 +256,7 @@
 
 <div id="what">What is your</div><div id="intention">intentïon</div>
 
-<div id="running">The running experiment branch URL will be here.</div>
+<div id="running">The running experiment <a href="" target="_blank">branch URL will be here.</a></div>
 
 <!-- VT100 Terminal Emulator -->
 <div id="terminal-container">
@@ -716,7 +728,7 @@
                         console.log(`Found branch URL: ${branchUrl}`);
 
                         // Update the running div with a clickable link
-                        runningDiv.innerHTML = `Current experiment branch: <a href="${branchUrl}" target="_blank" style="color: #333; text-decoration: underline; pointer-events: auto;">${branchUrl}</a>`;
+                        runningDiv.innerHTML = `Experiment branch: <a href="${branchUrl}" target="_blank" style="pointer-events: auto;">${branchUrl}</a>`;
                     } else {
                         console.log(`No matching GitHub branch URL found in line: ${lastUrlLine}`);
                         runningDiv.textContent = 'No current experiment branch found.';

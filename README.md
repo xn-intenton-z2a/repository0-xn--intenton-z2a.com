@@ -414,7 +414,7 @@ Public brand:
 - [x] Chat to interact with the projects
 - [x] Change AWS_CERTIFICATE_ARN to ARN
 - [x] Automated activity generation from showcased repositories
-- [~] Access links to experiments from the intention logo which appears by the hamburger menu.
+- [x] Access links to experiments from the intention logo which appears by the hamburger menu.
 - [ ] Create websites from archived branches and add these to ./public/ to showcase the projects.
 - [ ] Showcase completed projects, back off to something achievable and that's where I am.
 - [ ] Generate articles from the library - like feature generation - then use Markdown to HTML to generate the articles.
