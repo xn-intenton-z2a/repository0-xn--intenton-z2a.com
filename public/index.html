@@ -112,7 +112,7 @@
         #what {
             color: #333;
             position: absolute;
-            top: 5%;
+            top: 2%;
             transform: translateY(-50%);
             font-size: 5vw;
             opacity: 0;
@@ -123,7 +123,7 @@
         #intention {
             color: #333;
             position: absolute;
-            top: 5%;
+            top: 2%;
             transform: translateY(-50%);
             font-size: 5vw;
             opacity: 0;
@@ -157,12 +157,51 @@
             left: 10%;
         }
 
+        /* VT100 Terminal Emulator Styles */
+        #terminal-container {
+            position: absolute;
+            top: 5%;
+            right: 5%;
+            width: 75vw; /* 2/3 of viewport width */
+            height: calc(66.67vw * 9 / 16); /* 16:9 aspect ratio */
+            background-color: #000;
+            border: 2px solid #00FF00;
+            border-radius: 5px;
+            padding: 10px;
+            box-sizing: border-box;
+            font-family: "Courier New", monospace;
+            overflow-y: auto; /* Changed from hidden to auto to enable vertical scrolling */
+            z-index: 600;
+        }
+
+        #terminal-output {
+            color: #00FF00; /* Classic green screen color */
+            font-size: 1.5vw;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            /* Removed overflow: hidden to allow content to expand within the scrollable container */
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 0.8em;
+            height: 1em;
+            background-color: #00FF00;
+            animation: blink 1s infinite;
+            vertical-align: middle;
+        }
+
         #giscus-container {
             position: absolute;
             width: 100%;
             left: 50%;
             transform: translateX(-50%);
-            top: 10%;
+            top: 20%;
             z-index: 1000;
             opacity: 0.75;
             padding: 2% 2%;
@@ -206,6 +245,12 @@
 <div id="what">What is your</div><div id="intention">intentïon</div>
 
 <div id="running">The running experiment branch URL will be here.</div>
+
+<!-- VT100 Terminal Emulator -->
+<div id="terminal-container">
+    <div id="terminal-output"></div>
+    <span class="cursor"></span>
+</div>
 
 <div id="random-line"></div>
 
@@ -251,6 +296,15 @@
     let randomLineTimeout;
     let randomLineFadeDuration = 3000; // 3 seconds for fade in/out
     let randomLinePauseDuration = 5000; // 5 seconds between lines
+
+    // Variables for terminal display
+    let terminalTimeout;
+    let currentLineIndex = 0;
+    let currentCharIndex = 0;
+    let isTyping = false;
+    let typingSpeed = 50; // milliseconds per character
+    let linePauseDuration = 2000; // 2 seconds pause at end of line
+    let clearScreenDuration = 1000; // 1 second for clear screen animation
 
     // Function to cycle through menu images
     function cycleMenuImages() {
@@ -483,7 +537,7 @@
         showIntention();
     }, 5000);
 
-    // Function to show a random line from intentïon.md
+    // Function to show a random line from intentïon.md (no longer used, replaced by terminal display)
     function showRandomLine() {
         // Don't proceed if there are no lines or if a line is already visible
         if (intentionLines.length === 0 || isRandomLineVisible) return;
@@ -520,6 +574,103 @@
         }, randomLineFadeDuration);
     }
 
+    // Function to type a character at a time in the terminal
+    function typeCharacter() {
+        if (intentionLines.length === 0 || currentLineIndex >= intentionLines.length) {
+            currentLineIndex = 0; // Reset to beginning if we've gone through all lines
+            // Clear the screen only when we've gone through all lines
+            const terminalOutput = document.getElementById('terminal-output');
+            terminalOutput.textContent = '';
+        }
+
+        const terminalOutput = document.getElementById('terminal-output');
+        const terminalContainer = document.getElementById('terminal-container');
+        const currentLine = intentionLines[currentLineIndex];
+
+        if (currentCharIndex < currentLine.length) {
+            // Add next character
+            terminalOutput.textContent += currentLine.charAt(currentCharIndex);
+            currentCharIndex++;
+
+            // Auto-scroll to the bottom to ensure the latest content is visible
+            terminalContainer.scrollTop = terminalContainer.scrollHeight;
+
+            // Schedule next character
+            terminalTimeout = setTimeout(typeCharacter, typingSpeed);
+        } else {
+            // Finished typing the line, pause before starting next line
+            isTyping = false;
+            terminalTimeout = setTimeout(startNextLine, linePauseDuration);
+        }
+    }
+
+    // Function to clear the screen with an animation
+    function clearScreenWithAnimation() {
+        const terminalOutput = document.getElementById('terminal-output');
+        const content = terminalOutput.textContent;
+
+        // If no content, just start next line
+        if (!content) {
+            startNextLine();
+            return;
+        }
+
+        // Create animation effect by removing characters one by one
+        let charCount = content.length;
+        const clearInterval = 10; // milliseconds between character removal
+        const totalClearTime = clearScreenDuration;
+        const removeDelay = totalClearTime / charCount;
+
+        function removeChar() {
+            if (charCount > 0) {
+                terminalOutput.textContent = content.substring(0, charCount - 1);
+                charCount--;
+                setTimeout(removeChar, removeDelay);
+            } else {
+                // Screen cleared, start next line
+                startNextLine();
+            }
+        }
+
+        removeChar();
+    }
+
+    // Function to start typing the next line
+    function startNextLine() {
+        if (isTyping) return;
+
+        isTyping = true;
+        currentCharIndex = 0;
+
+        // Increment line index
+        currentLineIndex = (currentLineIndex + 1) % intentionLines.length;
+
+        // Add a newline character before starting the next line (except for the first line)
+        if (currentLineIndex !== 0) {
+            const terminalOutput = document.getElementById('terminal-output');
+            const terminalContainer = document.getElementById('terminal-container');
+            terminalOutput.textContent += '\n';
+
+            // Auto-scroll to the bottom to ensure the latest content is visible
+            terminalContainer.scrollTop = terminalContainer.scrollHeight;
+        }
+
+        // Start typing the next line
+        typeCharacter();
+    }
+
+    // Function to start the terminal display
+    function startTerminalDisplay() {
+        // Don't start if there are no lines or already typing
+        if (intentionLines.length === 0 || isTyping) return;
+
+        // Clear any existing timeout
+        if (terminalTimeout) clearTimeout(terminalTimeout);
+
+        // Start typing the first line
+        startNextLine();
+    }
+
     // Function to poll the intention URL and update the running div
     function pollIntentionUrl() {
         const intentionUrl = 'https://raw.githubusercontent.com/xn-intenton-z2a/repository0/main/intentïon.md';
@@ -541,9 +692,9 @@
                 intentionLines = lines.filter(line => line.trim() !== '');
                 console.log(`Stored ${intentionLines.length} lines from intentïon.md`);
 
-                // Start showing random lines if not already started
-                if (!isRandomLineVisible) {
-                    showRandomLine();
+                // Start the terminal display if not already typing
+                if (!isTyping) {
+                    startTerminalDisplay();
                 }
 
                 // Filter to lines matching GitHub branch URLs using the same pattern as in agent-archive-intentïon.yml
