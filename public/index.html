@@ -48,7 +48,6 @@
             /*border: 2px solid transparent;*/
             border-radius: 5px;
             padding: 5px;
-            transition: opacity 3s; /* , border-color 0.3s */
         }
 
         /*#menu:hover {
@@ -332,7 +331,7 @@
         currentImageIndex = (currentImageIndex + 1) % images.length;
         images[currentImageIndex].style.opacity = '1';
 
-        // Set the next timeout based on which image is currently showing
+        // Set the next timeout based on which image is showing
         if (imageInterval) clearTimeout(imageInterval);
 
         // menu-img-1 (index 0) shows for 0.9s, menu-img-2 (index 1) shows for 0.1s
@@ -728,7 +727,7 @@
                         console.log(`Found branch URL: ${branchUrl}`);
 
                         // Update the running div with a clickable link
-                        runningDiv.innerHTML = `Experiment branch: <a href="${branchUrl}" target="_blank" style="pointer-events: auto;">${branchUrl}</a>`;
+                        runningDiv.innerHTML = `Activity log: <a href="${branchUrl}/intentïon.md" target="_blank" style="pointer-events: auto;">intentïon.md</a>`;
                     } else {
                         console.log(`No matching GitHub branch URL found in line: ${lastUrlLine}`);
                         runningDiv.textContent = 'No current experiment branch found.';
