@@ -688,7 +688,8 @@
     // Function to poll the intention URL and update the menu
     function pollIntentionUrl() {
         const repositoryUrl = 'https://github.com/xn-intenton-z2a/repository0';
-        const intentionUrl = `${repositoryUrl}/main/intentïon.md`;
+        const rawContentBaseUrl = 'https://raw.githubusercontent.com/xn-intenton-z2a/repository0';
+        const intentionUrl = `${rawContentBaseUrl}/main/intentïon.md`;
         const experimentLinkAnchor = document.getElementById('experiment-link');
 
         // Fetch the intention file
