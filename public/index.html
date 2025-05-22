@@ -50,10 +50,6 @@
             padding: 5px;
         }
 
-        /*#menu:hover {
-            border-color: #3F5965;
-        }*/
-
         #menu img {
             position: absolute;
             top: -35%;
@@ -88,17 +84,6 @@
             transition: border-color 0.3s;
         }
 
-        /* Default browser styling for experiment link */
-        /*#experiment-link {
-            color: blue;
-            text-decoration: underline;
-        }*/
-
-        /* Allow default browser behavior for visited links */
-        /*#experiment-link:visited {
-            color: purple;
-        }*/
-
         #menu-items a:hover {
             border-color: #3F5965;
         }
@@ -118,45 +103,6 @@
             z-index: 3000;
             display: none;
         }
-
-        /*
-        #what {
-            color: #333;
-            position: absolute;
-            top: 2%;
-            transform: translateY(-50%);
-            font-size: 5vw;
-            opacity: 0;
-            transition: opacity 3s;
-            pointer-events: none;
-        }
-
-        #intention {
-            color: #333;
-            position: absolute;
-            top: 2%;
-            transform: translateY(-50%);
-            font-size: 5vw;
-            opacity: 0;
-            transition: opacity 3s;
-            pointer-events: none;
-            z-index: 10;
-        }
-        */
-
-        /*
-        #running {
-            color: #333;
-            position: absolute;
-            top: 40%;
-            transform: translateY(-50%);
-            font-size: 2.2vw;
-            opacity: 0.5;
-            pointer-events: none;
-            z-index: 10;
-            width: 100%;
-        }
-        */
 
         #steps-overlay {
             position: fixed;
@@ -209,7 +155,6 @@
             font-size: 1vw;
             line-height: 1.5;
             white-space: pre-wrap;
-            /* Removed overflow: hidden to allow content to expand within the scrollable container */
         }
 
         @keyframes blink {
@@ -256,8 +201,7 @@
 
 <div id="menu-items">
     <a href="#" id="about-link">What is this website?</a>
-    <a href="https://github.com/xn-intenton-z2a/repository0/blob/main/intentïon.md" target="_blank" style="pointer-events: auto;">Current experiment narrative</a>
-    <a href="#" id="experiment-link">Experiments</a>
+    <a href="https://github.com/xn-intenton-z2a/repository0/blob/main/intentïon.md" id="current-experiment" target="_blank" style="pointer-events: auto;">Current experiment narrative</a>
 </div>
 
 <div id="about-box">
@@ -285,10 +229,6 @@
         (you can change the prompts at every step)
     </div>
 </div>
-
-<!-- div id="what">What is your</div><div id="intention">intentïon</div -->
-
-<!-- div id="running">Activity log: <a href="https://github.com/xn-intenton-z2a/repository0/blob/main/intentïon.md" target="_blank" style="pointer-events: auto;">intentïon.md</a></div -->
 
 <!-- VT100 Terminal Emulator -->
 <div id="terminal-container">
@@ -325,10 +265,6 @@
     // Function to show intention with a random position
     let isMenuVisible = false;
     let menuTimeout;
-    //let isWhatVisible = false;
-    //let whatTimeout;
-    //let isIntentionVisible = false;
-    //let intentionTimeout;
     let currentImageIndex = 0;
     let imageInterval;
     let menuItemsVisible = false;
@@ -339,33 +275,8 @@
     const repositoryOwner = 'xn-intenton-z2a';
     const repositoryName = 'repository0';
 
-    // Function to position running below intention
-    //function updateRunningPosition() {
-        //const intention = document.getElementById('intention');
-        //const running = document.getElementById('running');
-        //if (!intention || !running) return;
-
-        // Get the intention element's position and dimensions
-        //const intentionRect = intention.getBoundingClientRect();
-
-        // Set running's top position to be at the bottom of intention
-        //running.style.top = `${intentionRect.bottom}px`;
-
-        // Make sure running has the same left position as intention
-        //if (intention.style.left) {
-        //    running.style.left = intention.style.left;
-        //}
-
-        // Adjust running's opacity based on intention's visibility
-        //running.style.opacity = isIntentionVisible ? 0.5 : 0;
-    //}
-
     // Variables for random lines from intentïon.md
     let intentionLines = [];
-    //let isRandomLineVisible = false;
-    //let randomLineTimeout;
-    //let randomLineFadeDuration = 3000; // 3 seconds for fade in/out
-    //let randomLinePauseDuration = 5000; // 5 seconds between lines
 
     // Variables for terminal display
     let terminalTimeout;
@@ -374,7 +285,6 @@
     let isTyping = false;
     let typingSpeed = 5; // 5 milliseconds per character
     let linePauseDuration = 100; // 1/10 second pause at end of line
-    //let clearScreenDuration = 1000; // 1 second for clear screen animation
 
     // Function to cycle through menu images
     function cycleMenuImages() {
@@ -465,78 +375,6 @@
         }
     }
 
-    /*
-    function showWhat() {
-        // Don't trigger if the "what" div is already visible
-        if (isWhatVisible) return;
-
-        const what = document.getElementById('what');
-        // Set a random left position between 25% and 75%
-        const randomLeft = Math.floor(Math.random() * (75 - 25 + 1)) + 25;
-        what.style.left = `${randomLeft}%`;
-        what.style.opacity = '1';
-        //what.textContent = "What is your";
-        isWhatVisible = true;
-
-        // Clear any existing timeout
-        if (whatTimeout) clearTimeout(whatTimeout);
-
-        // Hide what after 0.75 seconds
-        whatTimeout = setTimeout(() => {
-            what.style.opacity = '0';
-            isWhatVisible = false;
-        }, 750);
-    }
-
-    function showIntention() {
-        console.log('showIntention called'); // Debug log
-
-        // Don't trigger if the "intention" div is already visible
-        if (isIntentionVisible) {
-            console.log('intention already visible, returning'); // Debug log
-            return;
-        }
-
-        // Set a flag immediately to prevent multiple triggers during delay
-        isIntentionVisible = true;
-        console.log('Setting isIntentionVisible to true'); // Debug log
-
-        const intention = document.getElementById('intention');
-        const running = document.getElementById('running');
-
-        // Set a random left position between 25% and 75%
-        const randomLeft = Math.floor(Math.random() * (75 - 25 + 1)) + 25;
-        intention.style.left = `${randomLeft}%`;
-        running.style.left = `${randomLeft}%`; // Make running follow intention's left position
-        console.log(`Setting left position to ${randomLeft}%`); // Debug log
-
-        // Clear any existing timeout
-        if (intentionTimeout) clearTimeout(intentionTimeout);
-
-        // Add a delay of 1 second before showing the intention
-        intentionTimeout = setTimeout(() => {
-            intention.style.opacity = '1';
-            console.log('Setting opacity to 1'); // Debug log
-
-            // Position running below intention
-            //updateRunningPosition();
-
-            // Hide intention after 3 seconds
-            intentionTimeout = setTimeout(() => {
-                intention.style.opacity = '0';
-                isIntentionVisible = false;
-                console.log('Setting isIntentionVisible to false'); // Debug log
-
-                // Update running position and opacity when intention is hidden
-                //updateRunningPosition();
-            }, 3000);
-        }, 1500);
-    }
-    */
-
-    // Show intention on mousemove (works on every mousemove)
-    //console.log('Adding event listeners');
-
     // Make sure DOM is fully loaded before adding event listeners
     document.addEventListener('DOMContentLoaded', function() {
         console.log('DOM fully loaded');
@@ -576,15 +414,12 @@
             e.stopPropagation(); // Prevent document click from firing
         });
 
-        // Position running below intention initially
-        //updateRunningPosition();
     });
 
-    // Add window resize event listener to update running position
+    // Add a window resize event listener to update running position
     window.addEventListener('resize', function() {
         // Debounce the resize event to avoid excessive calculations
         if (resizeTimeout) clearTimeout(resizeTimeout);
-        //resizeTimeout = setTimeout(updateRunningPosition, 100);
     });
 
     // Add event listeners immediately as well (in case DOMContentLoaded already fired)
@@ -610,48 +445,7 @@
     setTimeout(function() {
         console.log('Calling showIntention directly');
         showMenu();
-        //showWhat();
-        //showIntention();
     }, 5000);
-
-    /*
-    // Function to show a random line from intentïon.md (no longer used, replaced by terminal display)
-    function showRandomLine() {
-        // Don't proceed if there are no lines or if a line is already visible
-        if (intentionLines.length === 0 || isRandomLineVisible) return;
-
-        // Set flag to prevent multiple triggers
-        isRandomLineVisible = true;
-
-        const randomLineDiv = document.getElementById('random-line');
-
-        // Select a random line from intentionLines
-        const randomIndex = Math.floor(Math.random() * intentionLines.length);
-        const randomLine = intentionLines[randomIndex];
-
-        // Set random vertical position between 20% and 80%
-        const randomTop = Math.floor(Math.random() * (80 - 20 + 1)) + 20;
-        randomLineDiv.style.top = `${randomTop}%`;
-
-        // Clear any existing timeout
-        if (randomLineTimeout) clearTimeout(randomLineTimeout);
-
-        // Show the random line
-        randomLineDiv.textContent = randomLine;
-        randomLineDiv.style.opacity = '1';
-
-        // Hide the random line after the fade duration
-        randomLineTimeout = setTimeout(() => {
-            randomLineDiv.style.opacity = '0';
-
-            // Reset flag and schedule next line after pause duration
-            randomLineTimeout = setTimeout(() => {
-                isRandomLineVisible = false;
-                showRandomLine(); // Show next random line
-            }, randomLinePauseDuration);
-        }, randomLineFadeDuration);
-    }
-    */
 
     // Function to type a character at a time in the terminal
     function typeCharacter() {
@@ -667,7 +461,7 @@
         const currentLine = intentionLines[currentLineIndex];
 
         if (currentCharIndex < currentLine.length) {
-            // Add next character
+            // Add the next character
             terminalOutput.textContent += currentLine.charAt(currentCharIndex);
             currentCharIndex++;
 
@@ -682,37 +476,6 @@
             terminalTimeout = setTimeout(startNextLine, linePauseDuration);
         }
     }
-
-    // Function to clear the screen with an animation
-    //function clearScreenWithAnimation() {
-    //    const terminalOutput = document.getElementById('terminal-output');
-    //    const content = terminalOutput.textContent;
-
-        // If no content, just start next line
-    //    if (!content) {
-    //        startNextLine();
-    //        return;
-    //    }
-
-        // Create animation effect by removing characters one by one
-    //    let charCount = content.length;
-    //const clearInterval = 10; // milliseconds between character removal
-    //    const totalClearTime = clearScreenDuration;
-    //    const removeDelay = totalClearTime / charCount;
-
-    //    function removeChar() {
-    //        if (charCount > 0) {
-    //            terminalOutput.textContent = content.substring(0, charCount - 1);
-    //            charCount--;
-    //            setTimeout(removeChar, removeDelay);
-    //        } else {
-    //            // Screen cleared, start next line
-    //            startNextLine();
-     //       }
-      //  }
-
-     //   removeChar();
-    //}
 
     // Function to start typing the next line
     function startNextLine() {
@@ -749,23 +512,6 @@
         // Start typing the first line
         startNextLine();
     }
-/*
-
-            // Update experiment link
-            const experimentLink = document.getElementById('experiment-link');
-            const runningDiv = document.getElementById('running');
-            const linkElement = runningDiv.querySelector('a');
-
-            if (linkElement) {
-                experimentLink.href = linkElement.href;
-                experimentLink.target = "_blank"; // Add target="_blank" to open in new tab like the stand-alone link
-                experimentLink.textContent = 'Current Experiment: ' + linkElement.textContent.substring(0, 30) + '...';
-            } else {
-                experimentLink.textContent = 'No current experiment';
-                experimentLink.href = '#';
-            }
-
- */
 
     // Function to poll the intention URL and update the menu
     function pollIntentionUrl() {
@@ -800,7 +546,7 @@
 
     function selectExperimentBranches(){
         const repositoryUrl = `https://github.com/${repositoryOwner}/${repositoryName}`;
-        const experimentLinkAnchor = document.getElementById('experiment-link');
+        const currentExperimentLinkAnchor = document.getElementById('current-experiment');
         const branchesApiUrl = `https://api.github.com/repos/${repositoryOwner}/${repositoryName}/branches`;
 
         // Fetch all branches from GitHub API
@@ -818,8 +564,6 @@
 
                 if (intentionBranches.length === 0) {
                     console.log('No matching experiment branches found');
-                    experimentLinkAnchor.href = '#';
-                    experimentLinkAnchor.textContent = 'No current experiment branch found.';
                 } else {
                     // Sort branches in their natural ordering
                     intentionBranches.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' }));
@@ -833,13 +577,6 @@
                     const existingLinks = menuItems.querySelectorAll('a[data-experiment-branch]');
                     existingLinks.forEach(link => link.remove());
 
-                    // Update the main experiment link to point to the first branch
-                    const firstBranch = intentionBranches[0];
-                    const firstBranchUrl = `${repositoryUrl}/blob/${firstBranch.name}`;
-                    experimentLinkAnchor.href = `${firstBranchUrl}/intentïon.md`;
-                    experimentLinkAnchor.target = "_blank";
-                    experimentLinkAnchor.textContent = `Experiments (${intentionBranches.length})`;
-
                     // Add individual links for each branch
                     intentionBranches.forEach(branch => {
                         const branchName = branch.name;
@@ -851,17 +588,14 @@
                         branchLink.target = "_blank";
                         branchLink.textContent = branchName;
                         branchLink.setAttribute('data-experiment-branch', branchName);
-                        branchLink.style.paddingLeft = '20px'; // Indent to show it's a sub-item
 
                         // Add the link after the main experiment link
-                        menuItems.insertBefore(branchLink, experimentLinkAnchor.nextSibling);
+                        menuItems.insertBefore(branchLink, currentExperimentLinkAnchor.nextSibling);
                     });
                 }
             })
             .catch(error => {
                 console.error('Error fetching branches:', error);
-                experimentLinkAnchor.href = '#';
-                experimentLinkAnchor.textContent = 'Error fetching experiment branches.';
             });
     }
 
