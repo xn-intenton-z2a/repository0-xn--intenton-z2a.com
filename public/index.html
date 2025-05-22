@@ -142,36 +142,58 @@
             z-index: 10;
         }
 
+        /*
         #running {
             color: #333;
             position: absolute;
-            top: calc(2% + 5vw + 10px); /* Position below #intention (intention's top + font size + padding) */
+            top: 40%;
+            transform: translateY(-50%);
             font-size: 2.2vw;
             opacity: 0.5;
             pointer-events: none;
             z-index: 10;
+            width: 100%;
+        }
+        */
+
+        #steps-overlay {
+            position: fixed;
+            top: 0;
+            right: -30px;
+            /* transform: translateY(+50%); */
+            width: 75vw;
+            height: 50vh;
+            background-color: rgba(255, 255, 255, 0%);
+            display: flex;
+            justify-content: stretch;
+            align-items: stretch;
+            z-index: 2000;
+            pointer-events: none; /* Allow clicks to pass through */
         }
 
-        #random-line {
-            color: #333;
-            position: absolute;
-            font-size: 4vw;
-            opacity: 0;
-            transition: opacity 3s;
-            pointer-events: none;
-            z-index: 500; /* Behind giscus-container (z-index: 1000) */
-            text-align: center;
-            width: 80%;
-            left: 10%;
+        #steps-content {
+            max-width: 100%;
+            padding: 0;
+            font-size: 3vw;
+            /* light blue like the skies */
+            color: rgba(0, 0, 0, 0.8);
+            opacity: 75%;
+            text-align: justify;
+            line-height: 1.5;
+            /* Make it bold */
+            font-weight: bold;
+            /* Give the font a solid black outline */
+            text-shadow: 0 0 1px rgba(245, 127, 64, 10%);
         }
 
         /* VT100 Terminal Emulator Styles */
         #terminal-container {
             position: absolute;
-            top: 5%;
+            top: 35%;
+            /*transform: translateY(-15%);*/
             right: 5%;
-            width: 75vw; /* 2/3 of viewport width */
-            height: calc(66.67vw * 9 / 16); /* 16:9 aspect ratio */
+            width: 90vw; /* 2/3 of viewport width */
+            height: calc(65vw * 9 / 16); /* 16:9 aspect ratio */
             background-color: #000;
             opacity: 0.4;
             border: 2px solid #00FF00;
@@ -215,7 +237,7 @@
             opacity: 0.9;
             padding: 2% 2%;
             box-sizing: border-box;
-            max-height: 66.66vh;
+            max-height: 80vh;
             overflow-y: auto;
             background-color: rgba(180, 220, 255, 0.5);
         }
@@ -234,14 +256,19 @@
 </div>
 
 <div id="menu-items">
+    <a href="#" id="about-link">What is this website?</a>
+    <a href="https://github.com/xn-intenton-z2a/repository0/blob/main/intentïon.md" target="_blank" style="pointer-events: auto;">Current experiment narrative</a>
     <a href="#" id="experiment-link">Experiments</a>
-    <a href="#" id="about-link">About intentïon</a>
 </div>
 
 <div id="about-box">
     <h2>intentïon</h2>
-    <p>intentïon.com showcases experiments from <a href="https://github.com/xn-intenton-z2a/repository0" target="_blank">repository0</a>
-    using the <a href="https://github.com/xn-intenton-z2a/agentic-lib" target="_blank">agentic-lib</a> workflows.</p>
+    <p>
+        intentïon.com showcases experiments from repository template
+        <a href="https://github.com/xn-intenton-z2a/repository0" target="_blank">repository0</a>
+        built from the <a href="https://github.com/xn-intenton-z2a/agentic-lib" target="_blank">agentic-lib</a>
+        workflows.
+    </p>
     <p>This website's repository is licensed under the GNU General Public License (GPL).</p>
 </div>
 
@@ -251,9 +278,18 @@
 <div class="fogFour"></div>
 <div class="fogFive"></div>
 
+<div id="steps-overlay">
+    <div id="steps-content">
+        a&nbsp;&nbsp;create a GitHub repository from our template<br>
+        b&nbsp;&nbsp;save a mission statement for your project<br>
+        c&nbsp;&nbsp;your project grows until you decide it's done<br>
+        (you can change the prompts at every step)
+    </div>
+</div>
+
 <div id="what">What is your</div><div id="intention">intentïon</div>
 
-<div id="running">Activity log: <a href="https://github.com/xn-intenton-z2a/repository0/blob/main/intentïon.md" target="_blank" style="pointer-events: auto;">intentïon.md</a></div>
+<!-- div id="running">Activity log: <a href="https://github.com/xn-intenton-z2a/repository0/blob/main/intentïon.md" target="_blank" style="pointer-events: auto;">intentïon.md</a></div -->
 
 <!-- VT100 Terminal Emulator -->
 <div id="terminal-container">
@@ -298,6 +334,28 @@
     let imageInterval;
     let menuItemsVisible = false;
     let aboutBoxVisible = false;
+    let resizeTimeout;
+
+    // Function to position running below intention
+    //function updateRunningPosition() {
+        //const intention = document.getElementById('intention');
+        //const running = document.getElementById('running');
+        //if (!intention || !running) return;
+
+        // Get the intention element's position and dimensions
+        //const intentionRect = intention.getBoundingClientRect();
+
+        // Set running's top position to be at the bottom of intention
+        //running.style.top = `${intentionRect.bottom}px`;
+
+        // Make sure running has the same left position as intention
+        //if (intention.style.left) {
+        //    running.style.left = intention.style.left;
+        //}
+
+        // Adjust running's opacity based on intention's visibility
+        //running.style.opacity = isIntentionVisible ? 0.5 : 0;
+    //}
 
     // Variables for random lines from intentïon.md
     let intentionLines = [];
@@ -456,11 +514,17 @@
             intention.style.opacity = '1';
             console.log('Setting opacity to 1'); // Debug log
 
+            // Position running below intention
+            //updateRunningPosition();
+
             // Hide intention after 3 seconds
             intentionTimeout = setTimeout(() => {
                 intention.style.opacity = '0';
                 isIntentionVisible = false;
                 console.log('Setting isIntentionVisible to false'); // Debug log
+
+                // Update running position and opacity when intention is hidden
+                //updateRunningPosition();
             }, 3000);
         }, 1500);
     }
@@ -506,6 +570,16 @@
         document.getElementById('menu-items').addEventListener('click', function(e) {
             e.stopPropagation(); // Prevent document click from firing
         });
+
+        // Position running below intention initially
+        updateRunningPosition();
+    });
+
+    // Add window resize event listener to update running position
+    window.addEventListener('resize', function() {
+        // Debounce the resize event to avoid excessive calculations
+        if (resizeTimeout) clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(updateRunningPosition, 100);
     });
 
     // Add event listeners immediately as well (in case DOMContentLoaded already fired)
