@@ -119,6 +119,7 @@
             display: none;
         }
 
+        /*
         #what {
             color: #333;
             position: absolute;
@@ -141,6 +142,7 @@
             pointer-events: none;
             z-index: 10;
         }
+        */
 
         /*
         #running {
@@ -175,8 +177,7 @@
             max-width: 100%;
             padding: 0;
             font-size: 3vw;
-            /* light blue like the skies */
-            color: rgba(0, 0, 0, 0.8);
+            color: #3F5965; /* rgba(0, 0, 0, 0.8); */
             opacity: 75%;
             text-align: justify;
             line-height: 1.5;
@@ -281,13 +282,13 @@
 <div id="steps-overlay">
     <div id="steps-content">
         a&nbsp;&nbsp;create a GitHub repository from our template<br>
-        b&nbsp;&nbsp;save a mission statement for your project<br>
-        c&nbsp;&nbsp;your project grows until you decide it's done<br>
+        b&nbsp;&nbsp;write your goal as a mission statement<br>
+        c&nbsp;&nbsp;your repository grows as long as you want<br>
         (you can change the prompts at every step)
     </div>
 </div>
 
-<div id="what">What is your</div><div id="intention">intentïon</div>
+<!-- div id="what">What is your</div><div id="intention">intentïon</div -->
 
 <!-- div id="running">Activity log: <a href="https://github.com/xn-intenton-z2a/repository0/blob/main/intentïon.md" target="_blank" style="pointer-events: auto;">intentïon.md</a></div -->
 
@@ -326,10 +327,10 @@
     // Function to show intention with a random position
     let isMenuVisible = false;
     let menuTimeout;
-    let isWhatVisible = false;
-    let whatTimeout;
-    let isIntentionVisible = false;
-    let intentionTimeout;
+    //let isWhatVisible = false;
+    //let whatTimeout;
+    //let isIntentionVisible = false;
+    //let intentionTimeout;
     let currentImageIndex = 0;
     let imageInterval;
     let menuItemsVisible = false;
@@ -359,10 +360,10 @@
 
     // Variables for random lines from intentïon.md
     let intentionLines = [];
-    let isRandomLineVisible = false;
-    let randomLineTimeout;
-    let randomLineFadeDuration = 3000; // 3 seconds for fade in/out
-    let randomLinePauseDuration = 5000; // 5 seconds between lines
+    //let isRandomLineVisible = false;
+    //let randomLineTimeout;
+    //let randomLineFadeDuration = 3000; // 3 seconds for fade in/out
+    //let randomLinePauseDuration = 5000; // 5 seconds between lines
 
     // Variables for terminal display
     let terminalTimeout;
@@ -462,6 +463,7 @@
         }
     }
 
+    /*
     function showWhat() {
         // Don't trigger if the "what" div is already visible
         if (isWhatVisible) return;
@@ -528,6 +530,7 @@
             }, 3000);
         }, 1500);
     }
+    */
 
     // Show intention on mousemove (works on every mousemove)
     //console.log('Adding event listeners');
@@ -572,14 +575,14 @@
         });
 
         // Position running below intention initially
-        updateRunningPosition();
+        //updateRunningPosition();
     });
 
     // Add window resize event listener to update running position
     window.addEventListener('resize', function() {
         // Debounce the resize event to avoid excessive calculations
         if (resizeTimeout) clearTimeout(resizeTimeout);
-        resizeTimeout = setTimeout(updateRunningPosition, 100);
+        //resizeTimeout = setTimeout(updateRunningPosition, 100);
     });
 
     // Add event listeners immediately as well (in case DOMContentLoaded already fired)
@@ -605,10 +608,11 @@
     setTimeout(function() {
         console.log('Calling showIntention directly');
         showMenu();
-        showWhat();
-        showIntention();
+        //showWhat();
+        //showIntention();
     }, 5000);
 
+    /*
     // Function to show a random line from intentïon.md (no longer used, replaced by terminal display)
     function showRandomLine() {
         // Don't proceed if there are no lines or if a line is already visible
@@ -645,6 +649,7 @@
             }, randomLinePauseDuration);
         }, randomLineFadeDuration);
     }
+    */
 
     // Function to type a character at a time in the terminal
     function typeCharacter() {
