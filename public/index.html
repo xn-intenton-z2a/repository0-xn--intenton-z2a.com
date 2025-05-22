@@ -685,16 +685,15 @@
 
  */
 
-
-
     // Function to poll the intention URL and update the menu
     function pollIntentionUrl() {
-        const intentionUrl = 'https://raw.githubusercontent.com/xn-intenton-z2a/repository0/main/intentïon.md';
+        const repositoryUrl = 'https://github.com/xn-intenton-z2a/repository0';
+        const intentionUrl = `${repositoryUrl}/main/intentïon.md`;
         const experimentLinkAnchor = document.getElementById('experiment-link');
 
         // Fetch the intention file
         fetch(intentionUrl)
-            .then(response => {
+            .then(response => {xs
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }

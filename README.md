@@ -415,6 +415,14 @@ Public brand:
 - [x] Change AWS_CERTIFICATE_ARN to ARN
 - [x] Automated activity generation from showcased repositories
 - [x] Access links to experiments from the intention logo which appears by the hamburger menu.
+- [~] intentïon.com shows: past experiments: <link to branch intentïon.md>
+- [ ] Add 1-2-3 to the website
+```
+1. Create a GitHub repository from our template.
+2. Save a mission statement for your project.
+3. Watch and interact with the AI driven refinement and development until it’s done or reset and try-again.
+```
+- [ ] Create a repository from main via a button.
 - [ ] Create websites from archived branches and add these to ./public/ to showcase the projects.
 - [ ] Showcase completed projects, back off to something achievable and that's where I am.
 - [ ] Generate articles from the library - like feature generation - then use Markdown to HTML to generate the articles.
