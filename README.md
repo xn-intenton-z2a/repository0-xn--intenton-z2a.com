@@ -416,6 +416,7 @@ Public brand:
 - [x] Automated activity generation from showcased repositories
 - [x] Access links to experiments from the intention logo which appears by the hamburger menu.
 - [~] intentïon.com shows: past experiments: <link to branch intentïon.md>
+- [~] Move the activity log to just below the intentïon logo.
 - [ ] Add 1-2-3 to the website
 ```
 1. Create a GitHub repository from our template.

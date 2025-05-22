@@ -145,11 +145,9 @@
         #running {
             color: #333;
             position: absolute;
-            bottom: 5%;
-            /*transform: translateY(-50%);*/
+            top: calc(2% + 5vw + 10px); /* Position below #intention (intention's top + font size + padding) */
             font-size: 2.2vw;
             opacity: 0.5;
-            /*transition: opacity 3s;*/
             pointer-events: none;
             z-index: 10;
         }
@@ -442,9 +440,12 @@
         console.log('Setting isIntentionVisible to true'); // Debug log
 
         const intention = document.getElementById('intention');
+        const running = document.getElementById('running');
+
         // Set a random left position between 25% and 75%
         const randomLeft = Math.floor(Math.random() * (75 - 25 + 1)) + 25;
         intention.style.left = `${randomLeft}%`;
+        running.style.left = `${randomLeft}%`; // Make running follow intention's left position
         console.log(`Setting left position to ${randomLeft}%`); // Debug log
 
         // Clear any existing timeout
@@ -687,14 +688,17 @@
 
     // Function to poll the intention URL and update the menu
     function pollIntentionUrl() {
-        const repositoryUrl = 'https://github.com/xn-intenton-z2a/repository0';
-        const rawContentBaseUrl = 'https://raw.githubusercontent.com/xn-intenton-z2a/repository0';
+        const repositoryOwner = 'xn-intenton-z2a';
+        const repositoryName = 'repository0';
+        const repositoryUrl = `https://github.com/${repositoryOwner}/${repositoryName}`;
+        const rawContentBaseUrl = `https://raw.githubusercontent.com/${repositoryOwner}/${repositoryName}`;
         const intentionUrl = `${rawContentBaseUrl}/main/intentïon.md`;
         const experimentLinkAnchor = document.getElementById('experiment-link');
+        const branchesApiUrl = `https://api.github.com/repos/${repositoryOwner}/${repositoryName}/branches`;
 
-        // Fetch the intention file
+        // First fetch the intention file from main branch for terminal display
         fetch(intentionUrl)
-            .then(response => {xs
+            .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
@@ -712,42 +716,70 @@
                 if (!isTyping) {
                     startTerminalDisplay();
                 }
-
-                // Filter to lines matching GitHub branch URLs using the same pattern as in agent-archive-intentïon.yml
-                //const branchUrlPattern = /^\s*https:\/\/github\.com\/[^\/\s]+\/[^\/\s]+\/(tree|blob|edit|new|upload|commits)\/[^\s]+|https:\/\/github\.com\/[^\/\s]+\/[^\/\s]+\/compare\/[^.\/]+\.{3}[^\/\s]+/;
-                const branchUrlPattern = /^.*https:\/\/.*\/tree\/.*$/
-                const branchUrlLines = lines.filter(line => branchUrlPattern.test(line));
-
-                if (branchUrlLines.length === 0) {
-                    console.log('No matching GitHub branch URL found in intentïon.md');
-                    experimentLinkAnchor.href = '#';
-                    experimentLinkAnchor.textContent = 'No current experiment branch found.';
-                } else {
-                    // Get the last matching line
-                    const lastUrlLine = branchUrlLines[branchUrlLines.length - 1];
-
-                    // Extract URL by ignoring anything before the first https:// and up to the first non-url character
-                    const urlMatch = lastUrlLine.match(/https:\/\/[^ ]+/);
-                    if (urlMatch) {
-                        const branchUrl = urlMatch[0].replace(/tree/, 'blob');
-                        const branchName = branchUrl.split('/').pop(); // Get the last part of the URL as the branch name
-                        console.log(`Found branch URL: ${branchUrl}`);
-
-                        // Update the running div with a clickable link
-                        experimentLinkAnchor.href = `${branchUrl}/intentïon.md`;
-                        experimentLinkAnchor.target = "_blank"; // Add target="_blank" to open in new tab like the stand-alone link
-                        experimentLinkAnchor.textContent = `Experiment: ${branchName}`
-                    } else {
-                        console.log(`No matching GitHub branch URL found in line: ${lastUrlLine}`);
-                        experimentLinkAnchor.href = '#';
-                        experimentLinkAnchor.textContent = 'No current experiment branch found.';
-                    }
-                }
             })
             .catch(error => {
                 console.error('Error fetching intention file:', error);
+            });
+
+        // Fetch all branches from GitHub API
+        fetch(branchesApiUrl)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(branches => {
+                // Filter branches that match the regex intentïon-.*
+                const intentionBranchPattern = /^intentïon-.*/;
+                const intentionBranches = branches.filter(branch => intentionBranchPattern.test(branch.name));
+
+                if (intentionBranches.length === 0) {
+                    console.log('No matching experiment branches found');
+                    experimentLinkAnchor.href = '#';
+                    experimentLinkAnchor.textContent = 'No current experiment branch found.';
+                } else {
+                    // Sort branches in their natural ordering
+                    intentionBranches.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' }));
+
+                    console.log(`Found ${intentionBranches.length} experiment branches`);
+
+                    // Create a dropdown menu for all branches
+                    const menuItems = document.getElementById('menu-items');
+
+                    // Remove any existing experiment links (except the main one)
+                    const existingLinks = menuItems.querySelectorAll('a[data-experiment-branch]');
+                    existingLinks.forEach(link => link.remove());
+
+                    // Update the main experiment link to point to the first branch
+                    const firstBranch = intentionBranches[0];
+                    const firstBranchUrl = `${repositoryUrl}/blob/${firstBranch.name}`;
+                    experimentLinkAnchor.href = `${firstBranchUrl}/intentïon.md`;
+                    experimentLinkAnchor.target = "_blank";
+                    experimentLinkAnchor.textContent = `Experiments (${intentionBranches.length})`;
+
+                    // Add individual links for each branch
+                    intentionBranches.forEach(branch => {
+                        const branchName = branch.name;
+                        const branchUrl = `${repositoryUrl}/blob/${branchName}`;
+
+                        // Create a new link for this branch
+                        const branchLink = document.createElement('a');
+                        branchLink.href = `${branchUrl}/intentïon.md`;
+                        branchLink.target = "_blank";
+                        branchLink.textContent = branchName;
+                        branchLink.setAttribute('data-experiment-branch', branchName);
+                        branchLink.style.paddingLeft = '20px'; // Indent to show it's a sub-item
+
+                        // Add the link after the main experiment link
+                        menuItems.insertBefore(branchLink, experimentLinkAnchor.nextSibling);
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching branches:', error);
                 experimentLinkAnchor.href = '#';
-                experimentLinkAnchor.textContent = 'Error fetching current experiment branch.';
+                experimentLinkAnchor.textContent = 'Error fetching experiment branches.';
             });
     }
 
