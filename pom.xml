@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>xn--intenton-z2a-com</groupId>
     <artifactId>web</artifactId>
-    <version>1.1.0</version>
+    <version>1.1.1-0</version>
     <packaging>jar</packaging>
 
     <properties>
